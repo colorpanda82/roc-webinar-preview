@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<!-- PREVIEW BUILD. Generated from landing-page.html; do not edit this copy.
+     noindex is deliberate: this is an unlaunched product under three
+     physicians' names and must not appear in search results. -->
+
+<title>The Remission Circle opens [MONTH]: free live session [DATE] | Rheumatologist OnCall</title>
+<meta name="description" content="Three board-certified physicians walk you through The Remission Circle live, in 60 minutes. Free to attend, [DATE].">
+
+<!--
+  ROC WEBINAR LANDING PAGE — full production build, 2026-08-12.
+  ─────────────────────────────────────────────────────────────
+  Extends the APPROVED direction-a.html exploration (hero + sections 2-3)
+  to all 19 sections plus hero and footer disclaimer, per
+  landing-page-copy-SOURCE.txt (locked, do not edit) and BRIEF.md.
+
+  SIX NAMED FAULTS FROM direction-a.html, FIXED HERE:
+  1. Hero H1 crammed into a ~370px column, 4 ragged lines, dead gap before
+     the card. Rebuilt as a real 58/42 grid (.hero-grid) with H1 sizing
+     tuned to break in <=3 lines at 1440px. No ch-capped max-width on h1.
+  2. Headshots cropped through the tops of two heads, names overlapping
+     faces. Root cause: source JPEGs are exactly 400x400 (verified via
+     `sips`), and the old .session-tile was aspect-ratio:1/1 — with source
+     and container ratios identical, object-position has NO effect (cover
+     scale is equal on both axes, so nothing overflows to reposition).
+     Fixed by making tiles LANDSCAPE (aspect-ratio: 6/5), which forces
+     vertical overflow, then biasing object-position upward so the crop
+     favours forehead over chin. Names moved off the image entirely, to a
+     caption line below each tile.
+  3. Trust strip wrapped to two lines (item 3 wrapping starting on a stray
+     bullet). Root cause: it lived inside the ~55%-width copy column,
+     which cannot hold ~110 characters at any reasonable size. Moved to a
+     full-width row below the two-column grid, where the full ~1000px
+     container gives it room to hold one line at desktop.
+  4. Stray teal dot at the hero/section-2 seam. That was the ".chapter-mark"
+     dinkus — a deliberate device in the CSS, but its hairlines are near-
+     invisible against white, so it reads as an orphaned dot, not an
+     authored transition. Removed entirely; section-background changes now
+     carry the seam on their own, same convention as the DSC reference.
+  5. Section 2 numbered only 5 of 6 situations, breaking the run at 05.
+     DECISION: number all six, with 06 carried into the break-out card
+     (kept as a visually distinct pattern-break, per the build note that
+     item six's line is the one most likely to be recognised — but it is
+     no longer uncounted, so the list doesn't read as truncated).
+  6. Paragraphs not filling their columns, ragged right margins. Reading
+     measures below are set close to each column's actual rendered width
+     rather than a flat default, verified at 1440 and 390 via Playwright
+     render.
+
+  PALETTE CORRECTION (measured, not by eye — see BRIEF.md + report):
+  --teal-deep changed from #3F8189 (4.06:1 on mint, fails AA normal text)
+  to ROC's live-site teal #00616A (6.56:1 on mint, 7.20:1 white-on-fill).
+  Verified independently via WCAG relative-luminance contrast formula,
+  not eyeballed. #57A2A9 stays decorative-only (rules, dots, never text).
+  #9EC9CD used only as an eyebrow on navy ground (.section-navy).
+
+  Copy is set verbatim from landing-page-copy-SOURCE.txt. The builder
+  notes inside that source ("Format note for the build:", "Note on the
+  register", "Two notes for whoever builds it", etc.) are instructions to
+  the builder, not page text — none of that prose appears on the page.
+  Straight quotes in the source are set as typographic curly quotes here
+  (typesetting, not a copy edit — no word was added, removed or reordered).
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --navy: #151D2D;
+    --body: #3D4A5C;
+    --muted: #54637A;
+    --muted-soft: #8A97A8;
+    --teal-deep: #00616A;   /* corrected from #3F8189 — see build notes above */
+    --teal: #57A2A9;        /* decorative only — rules, dots, never text */
+    --teal-soft: #9EC9CD;   /* eyebrows on navy ground only */
+    --mint: #EEF6F6;
+    --mint-deep: #E4EEF0;
+    --hairline: #E8F1F2;
+    --on-dark: #C8D4E0;
+    --white: #FFFFFF;
+    --navy-hairline: rgba(200, 212, 224, 0.16);
+
+    --font: "Inter", -apple-system, "Segoe UI", sans-serif;
+    --radius: 10px;
+    --container: 1080px;
+    --section-pad: clamp(48px, 6vw, 80px);
+
+    --fs-h1:      clamp(2.25rem, 1.9vw + 1.65rem, 3.25rem);
+    --fs-h2:      clamp(1.625rem, 1.3vw + 1.2rem, 2.25rem);
+    --fs-lead:    clamp(1.0625rem, 0.3vw + 1rem, 1.25rem);
+    --fs-stat:    clamp(1.25rem, 0.7vw + 1rem, 1.625rem);
+    --fs-index:   clamp(1.5rem, 1vw + 1rem, 2rem);
+    --fs-md:      1.0625rem;
+    --fs-base:    1rem;
+    --fs-sm:      0.9375rem;
+    --fs-caption: 0.8125rem;
+    --fs-eyebrow: 0.75rem;
+    --fs-micro:   0.6875rem;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: var(--font);
+    color: var(--body);
+    background: var(--white);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
+
+  .container {
+    max-width: var(--container);
+    margin-inline: auto;
+    padding-inline: clamp(20px, 4vw, 40px);
+  }
+
+  h1, h2, h3 { line-height: 1.16; margin: 0; color: var(--navy); text-wrap: balance; }
+  h1 { font-size: var(--fs-h1); font-weight: 700; letter-spacing: -0.02em; }
+  h2 { font-size: var(--fs-h2); font-weight: 700; letter-spacing: -0.01em; }
+  h3 { font-size: var(--fs-md); font-weight: 700; }
+  p { margin: 0 0 1rem; }
+  p:last-child { margin-bottom: 0; }
+  .lead { font-size: var(--fs-lead); color: var(--body); max-width: 56ch; }
+
+  /* Skip link — visible on focus only */
+  .skip-link {
+    position: absolute;
+    left: 12px; top: -60px;
+    background: var(--navy);
+    color: var(--white);
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: var(--fs-sm);
+    z-index: 100;
+    transition: top 0.15s ease;
+  }
+  .skip-link:focus { top: 12px; }
+
+  :focus-visible { outline: 3px solid var(--teal-soft); outline-offset: 3px; }
+  .section-navy :focus-visible { outline-color: var(--teal-soft); }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    font-weight: 700;
+    font-size: var(--fs-eyebrow);
+    color: var(--teal-deep);
+    margin-bottom: 16px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 7px; height: 7px;
+    border-radius: 2px;
+    background: var(--teal);
+    flex-shrink: 0;
+  }
+  .section-navy .eyebrow { color: var(--teal-soft); }
+  .section-navy .eyebrow::before { background: var(--teal-soft); }
+
+  .section { padding: var(--section-pad) 0; }
+  .section-white     { background: var(--white); }
+  .section-mint      { background: var(--mint); }
+  .section-mint-deep { background: var(--mint-deep); }
+  .section-navy {
+    background: var(--navy);
+    color: var(--on-dark);
+  }
+  .section-navy h2 { color: var(--white); }
+  .section-navy p { color: var(--on-dark); }
+  .section-navy .lead { color: var(--white); }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: var(--font);
+    font-weight: 700;
+    font-size: var(--fs-base);
+    text-decoration: none;
+    border-radius: var(--radius);
+    padding: 15px 30px;
+    min-height: 52px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  }
+  .btn-primary { background: var(--teal-deep); color: var(--white); }
+  .btn-primary:hover { background: #024C53; transform: translateY(-1px); box-shadow: 0 10px 22px rgba(0,97,106,0.28); }
+  .btn-outline-dark {
+    background: transparent;
+    border: 2px solid rgba(200,212,224,0.4);
+    color: var(--white);
+    padding: 13px 28px;
+  }
+  .btn-outline-dark:hover { border-color: var(--teal-soft); }
+
+  /* ── Nav ── */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: rgba(255,255,255,0.94);
+    backdrop-filter: blur(6px);
+    padding: 14px 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .nav .container { display: flex; align-items: center; }
+  .nav img { height: 34px; width: auto; }
+  @media (max-width: 620px) { .nav { position: static; } }
+
+  /* ══════════════════ HERO ══════════════════ */
+  .hero { padding-top: clamp(44px, 6vw, 76px); padding-bottom: clamp(36px, 5vw, 56px); }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    gap: 20px 56px;
+    align-items: start;
+  }
+  .hero-copy-top .lead { margin-bottom: 14px; }
+  .hero-copy-top .lead:last-of-type { margin-bottom: 26px; }
+
+  .mark {
+    position: relative;
+    z-index: 0;
+    display: inline-block;
+    line-height: 1;
+  }
+  .mark::after {
+    content: "";
+    position: absolute;
+    left: -4px; right: -4px;
+    bottom: -0.14em;
+    height: 4px;
+    background: var(--teal-deep);
+    border-radius: 2px;
+    transform: rotate(-1deg);
+    z-index: -1;
+  }
+
+  .under-btn { font-size: var(--fs-sm); color: var(--muted); max-width: 42ch; margin: 14px 0 0; }
+
+  /* Trust strip: full-width row BELOW the grid (fault 3 fix). The old
+     version lived inside the ~55%-width copy column, which cannot hold
+     ~110 characters at any legible size — hence the wrap. A full-width
+     row uses the whole ~1000px container, easily one line at desktop. */
+  .hero-trust-row { margin-top: clamp(28px, 3.5vw, 40px); border-top: 1px solid var(--hairline); padding-top: 20px; }
+  .trust-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 26px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    color: var(--navy);
+  }
+  .trust-strip li { display: flex; align-items: center; gap: 9px; white-space: nowrap; }
+  .trust-strip li::before {
+    content: "";
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--teal);
+    flex-shrink: 0;
+  }
+  .trust-strip li:first-child::before { display: none; }
+  /* Below 700px the four items cannot share rows evenly: variable phrase
+     lengths produce a 1/1/2 wrap that reads as accidental. Stack one per
+     line instead, which wraps evenly and deliberately at any width. */
+  @media (max-width: 700px) {
+    .trust-strip { flex-direction: column; gap: 12px; }
+    .trust-strip li { white-space: normal; }
+    /* Once stacked, the dot is a list bullet rather than a separator, so the
+       first item needs one too. Hiding it only makes sense on a single row. */
+    .trust-strip li:first-child::before { display: block; }
+  }
+
+  /* ── Hero call window ──────────────────────────────────────────────────
+     Replicates the DSC Aug-20 page's FaceTime-style call window, on ROC's
+     own navy rather than DSC's. Structure copied deliberately: header bar
+     with wordmark and LIVE pill, an encrypted/recording/gallery meta row,
+     the tile gallery with name chips, a Q&A strip, and a labelled control
+     bar with a red Leave pill.
+
+     Two deliberate departures from DSC, both for reasons:
+     1. ROC has three physicians, not four, so a 2x2 grid would leave a
+        hole. Diana takes the wide host tile and the other two sit below,
+        which is the layout DSC itself used before it grew to four people.
+     2. DSC's active-speaker ring is bright green (#22ED98). Green is not
+        in ROC's palette, so the ring is ROC's own teal. It still reads as
+        the live-speaker convention without importing a foreign colour.
+
+     DSC's card also shows "98 attending". No invented number goes on this
+     page, so the Q&A strip carries the question only. */
+  .call-window {
+    background: var(--navy);
+    border-radius: 22px;
+    padding: 14px;
+    overflow: hidden;
+    box-shadow: 0 30px 70px rgba(21,29,45,0.40), inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+  .call-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    margin: -14px -14px 14px;
+  }
+  .call-header-icon {
+    flex-shrink: 0;
+    width: 28px; height: 28px;
+    border-radius: 9px;
+    background: rgba(255,255,255,0.16);
+    display: grid;
+    place-items: center;
+    color: var(--white);
+  }
+  .call-header-title {
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.01em;
+  }
+  .call-live {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: var(--fs-micro);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--white);
+    background: rgba(158,201,205,0.16);
+    border: 1px solid rgba(158,201,205,0.55);
+    padding: 4px 11px;
+    border-radius: 20px;
+  }
+  .call-live::before {
+    content: "";
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--teal);
+    animation: call-pulse 2s infinite;
+  }
+  @keyframes call-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(87,162,169,0.55); }
+    70%  { box-shadow: 0 0 0 7px rgba(87,162,169,0); }
+    100% { box-shadow: 0 0 0 0 rgba(87,162,169,0); }
+  }
+
+  .call-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: var(--fs-micro);
+    font-weight: 600;
+    color: rgba(200,212,224,0.72);
+  }
+  .call-meta-item { display: inline-flex; align-items: center; gap: 5px; }
+  .call-meta-item svg { flex-shrink: 0; opacity: 0.8; }
+  .call-meta-rec { color: var(--teal-soft); display: inline-flex; align-items: center; gap: 5px; }
+  .call-meta-rec::before {
+    content: "";
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--teal-soft);
+    animation: call-pulse 2s infinite;
+  }
+  .call-meta-view {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.14);
+    padding: 3px 9px;
+    border-radius: 7px;
+    color: rgba(200,212,224,0.9);
+  }
+
+  .call-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .call-tile {
+    position: relative;
+    border-radius: 13px;
+    overflow: hidden;
+    background: #0E1626;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.28);
+  }
+  /* Source headshots are 400x400. A square tile gives object-fit:cover zero
+     overflow to work with, so object-position cannot rescue a tight top
+     crop. Both shapes here are wider than tall for exactly that reason. */
+  .call-tile img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; display: block; }
+  /* The host tile spans both columns, so at 16/9 it scaled a 400x400 source
+     to full card width and then showed only the middle 56% of its height:
+     a face two sizes larger than the two tiles beneath it. 4/3 keeps about
+     three quarters of the frame, so all three heads read at one scale. */
+  .call-tile--wide { grid-column: 1 / -1; aspect-ratio: 4 / 3; }
+  .call-tile--sq { aspect-ratio: 5 / 4; }
+  .call-tile--host { box-shadow: 0 0 0 3px var(--teal), 0 0 10px 1px rgba(87,162,169,0.45); }
+  .call-name {
+    position: absolute;
+    left: 9px;
+    bottom: 9px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: calc(100% - 18px);
+    font-size: var(--fs-micro);
+    font-weight: 600;
+    color: var(--white);
+    background: rgba(10,18,32,0.78);
+    border: 1px solid rgba(255,255,255,0.14);
+    padding: 4px 9px;
+    border-radius: 8px;
+  }
+  .call-name svg { flex: none; opacity: 0.9; }
+  .call-name--host svg { color: var(--teal); opacity: 1; }
+
+  .call-qa {
+    margin-top: 12px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 11px;
+    padding: 11px 13px;
+  }
+  .call-qa-head {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--fs-micro);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--teal-soft);
+    margin-bottom: 6px;
+  }
+  .call-qa-q { margin: 0; font-size: var(--fs-caption); color: var(--on-dark); line-height: 1.5; }
+  .call-qa-who { color: var(--teal-soft); font-weight: 700; }
+
+  .call-bar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-around;
+    gap: 4px;
+    margin: 14px -14px -14px;
+    padding: 14px 10px 12px;
+  }
+  .call-btn-group { display: flex; flex-direction: column; align-items: center; gap: 7px; }
+  .call-btn {
+    width: 37px; height: 37px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: rgba(255,255,255,0.09);
+    border: 1px solid rgba(255,255,255,0.16);
+    color: var(--white);
+  }
+  .call-btn-label { font-size: var(--fs-micro); font-weight: 600; color: rgba(200,212,224,0.78); }
+  .call-leave {
+    align-self: center;
+    font-size: var(--fs-micro);
+    font-weight: 700;
+    color: var(--white);
+    background: #B4474D;
+    padding: 9px 16px;
+    border-radius: 20px;
+  }
+
+  /* The date sits under the card rather than inside it: the DSC component
+     has no date slot, and inventing one would break the replication. */
+  .call-caption {
+    margin-top: 14px;
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    color: var(--muted);
+    text-align: center;
+  }
+  .call-caption strong { color: var(--navy); }
+
+  @media (max-width: 860px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 32px; }
+  }
+  @media (max-width: 520px) {
+    .call-btn-label { display: none; }
+    .call-bar { padding: 12px 6px 10px; }
+    /* "LIVE SESSION" broke across two lines at 390px and pushed the header
+       out of shape. The wordmark yields instead, since it can wrap safely. */
+    .call-live { white-space: nowrap; letter-spacing: 0.06em; padding: 4px 9px; }
+    .call-header { gap: 8px; }
+  }
+
+  /* ══════════════════ SECTION 2 — this is for you ══════════════════ */
+  .struggle-head { max-width: 62ch; margin-bottom: clamp(28px, 3vw, 40px); }
+  .struggle-head .lead { margin-top: 14px; }
+
+  .struggle-list { list-style: none; margin: 0 0 clamp(36px, 4vw, 52px); padding: 0; border-top: 1px solid rgba(21,29,45,0.12); }
+  .struggle-item { display: grid; grid-template-columns: auto 1fr; gap: 22px; align-items: baseline; padding: 22px 0; border-bottom: 1px solid rgba(21,29,45,0.12); }
+  .struggle-index { font-size: var(--fs-index); font-weight: 800; line-height: 0.85; letter-spacing: -0.02em; color: var(--teal-deep); font-variant-numeric: tabular-nums; }
+  .struggle-text { margin: 0; font-size: var(--fs-base); color: var(--body); max-width: 84ch; }
+  .struggle-text strong { color: var(--navy); font-weight: 700; }
+
+  /* Item six now carries its own number (06) into the break-out card —
+     the numbering decision for fault 5: number all six, sixth stays a
+     visual pattern-break but is no longer uncounted. */
+  .struggle-item--break {
+    grid-template-columns: auto 1fr;
+    background: var(--white);
+    border: 1px solid rgba(0,97,106,0.22);
+    border-radius: var(--radius);
+    padding: 26px 28px;
+    margin-top: 6px;
+    border-bottom: 1px solid rgba(0,97,106,0.22);
+    align-items: center;
+  }
+  .struggle-item--break .struggle-index { color: var(--teal-deep); }
+  .struggle-item--break .struggle-text { font-size: var(--fs-stat); font-weight: 600; color: var(--navy); max-width: 48ch; line-height: 1.4; }
+
+  .struggle-close { max-width: 68ch; padding-left: 22px; border-left: 3px solid var(--teal-deep); margin-bottom: clamp(40px, 4.5vw, 60px); }
+  .struggle-close p { font-size: var(--fs-stat); font-weight: 600; color: var(--navy); line-height: 1.4; margin: 0; }
+
+  .struggle-coda { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+  .coda-avatars { display: flex; flex-shrink: 0; }
+  .coda-avatars img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; object-position: 50% 22%; border: 3px solid var(--mint); margin-left: -14px; }
+  .coda-avatars img:first-child { margin-left: 0; }
+  .coda-text { flex: 1; min-width: 240px; }
+  .coda-text p:first-child { font-size: var(--fs-md); color: var(--navy); font-weight: 600; margin-bottom: 8px; max-width: 60ch; }
+  .coda-text p:last-child { font-size: var(--fs-lead); color: var(--teal-deep); font-weight: 700; font-style: italic; max-width: 42ch; }
+
+  @media (max-width: 620px) {
+    .struggle-item { grid-template-columns: auto 1fr; gap: 14px; padding: 18px 0; }
+    .struggle-index { font-size: 1.5rem; }
+  }
+
+  /* ══════════════════ SECTION 3 — six things, and what they mean ══════════════════ */
+  .table-head { margin-bottom: clamp(28px, 3vw, 40px); max-width: 62ch; }
+  .value-table { border-top: 1px solid var(--hairline); }
+  .value-table-labels { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 32px; padding: 0 0 14px; font-size: var(--fs-eyebrow); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted-soft); }
+  .value-row { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 32px; padding: 26px 0; border-bottom: 1px solid var(--hairline); align-items: start; }
+  .value-what { font-size: var(--fs-md); font-weight: 700; color: var(--navy); line-height: 1.35; max-width: 36ch; }
+  /* "The right-hand column is the reason anyone joins" (source note) —
+     weighted visually: mint fill, larger measure, and it is allowed to
+     run its full column width instead of being capped short. */
+  .value-means { background: var(--mint); border-radius: var(--radius); padding: 20px 24px; font-size: var(--fs-md); color: var(--body); line-height: 1.6; max-width: 62ch; }
+  .value-means strong { color: var(--teal-deep); }
+
+  @media (max-width: 700px) {
+    .value-table-labels { display: none; }
+    .value-row { grid-template-columns: 1fr; gap: 12px; padding: 22px 0; }
+    .value-what { max-width: none; }
+    .value-means { max-width: none; }
+    .value-means::before { content: "What that means for you"; display: block; font-size: var(--fs-caption); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--teal-deep); margin-bottom: 8px; }
+  }
+
+  /* ══════════════════ SECTION 4 — curriculum ══════════════════ */
+  .curriculum-head { max-width: 64ch; }
+  .curriculum-head .lead { margin-top: 14px; max-width: 62ch; }
+  .curriculum-grid {
+    list-style: none;
+    margin: clamp(28px, 3.5vw, 40px) 0 clamp(28px, 3vw, 36px);
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: clamp(28px, 4vw, 56px);
+  }
+  .curriculum-row { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: baseline; padding: 18px 0; border-top: 1px solid var(--navy-hairline); }
+  .curriculum-month { font-size: var(--fs-eyebrow); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--teal-soft); white-space: nowrap; }
+  .curriculum-title { margin: 0; font-size: var(--fs-base); font-weight: 500; color: var(--white); line-height: 1.45; max-width: 48ch; }
+  .curriculum-close { max-width: 66ch; padding-left: 22px; border-left: 3px solid var(--teal-soft); }
+  .curriculum-close p { font-size: var(--fs-md); font-weight: 600; color: var(--white); line-height: 1.5; }
+  @media (max-width: 760px) {
+    .curriculum-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ══════════════════ SECTION 5 — what real help looks like ══════════════════ */
+  .scenario-head { max-width: 60ch; }
+  .scenario-list { list-style: none; margin: clamp(28px, 3.5vw, 40px) 0 clamp(32px, 3.5vw, 48px); padding: 0; display: grid; gap: 0; }
+  .scenario-item { display: flex; gap: 18px; padding: 20px 0; border-top: 1px solid var(--hairline); align-items: flex-start; }
+  .scenario-item::before { content: ""; flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: var(--teal); margin-top: 9px; }
+  .scenario-text { margin: 0; font-size: var(--fs-md); color: var(--navy); max-width: 84ch; line-height: 1.55; }
+  .scenario-close { max-width: 68ch; padding-left: 22px; border-left: 3px solid var(--teal-deep); }
+  .scenario-close p { font-size: var(--fs-stat); font-weight: 600; color: var(--navy); line-height: 1.4; }
+
+  /* ══════════════════ SECTION 6 — the agenda ══════════════════ */
+  .agenda-head { max-width: 62ch; }
+  .agenda-timeline { list-style: none; margin: clamp(28px, 3.5vw, 40px) 0 0; padding: 0; position: relative; }
+  .agenda-timeline::before { content: ""; position: absolute; left: 5px; top: 8px; bottom: 8px; width: 1px; background: var(--hairline); }
+  .agenda-item { position: relative; padding: 0 0 clamp(26px, 3vw, 36px) 34px; }
+  .agenda-item:last-child { padding-bottom: 0; }
+  .agenda-item::before { content: ""; position: absolute; left: 0; top: 5px; width: 11px; height: 11px; border-radius: 50%; background: var(--white); border: 2px solid var(--teal-deep); }
+  .agenda-range { display: block; font-size: var(--fs-eyebrow); font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--teal-deep); margin-bottom: 6px; }
+  .agenda-text { margin: 0; font-size: var(--fs-md); color: var(--body); max-width: 80ch; line-height: 1.55; }
+
+  /* The "do not cut" line — given real visual weight, not buried as fine
+     print (explicit build instruction). */
+  .agenda-honesty {
+    margin-top: clamp(28px, 3.5vw, 40px);
+    background: var(--navy);
+    border-radius: 14px;
+    padding: 28px 30px;
+    max-width: 72ch;
+  }
+  .agenda-honesty p { margin: 0; font-size: var(--fs-md); font-weight: 600; color: var(--white); line-height: 1.6; }
+  .agenda-honesty .eyebrow { color: var(--teal-soft); }
+  .agenda-honesty .eyebrow::before { background: var(--teal-soft); }
+
+  /* ══════════════════ SECTION 7 — what you leave with ══════════════════ */
+  .takeaway-head { max-width: 62ch; }
+  .dot-list { list-style: none; margin: clamp(28px, 3.5vw, 40px) 0 clamp(28px, 3vw, 40px); padding: 0; display: grid; gap: 0; }
+  .dot-list li { display: flex; gap: 16px; padding: 18px 0; border-top: 1px solid var(--hairline); align-items: flex-start; }
+  .dot-list li::before { content: ""; flex-shrink: 0; width: 7px; height: 7px; border-radius: 50%; background: var(--teal-deep); margin-top: 9px; }
+  .dot-list li p { margin: 0; font-size: var(--fs-md); color: var(--navy); max-width: 84ch; line-height: 1.55; }
+  .takeaway-plain { max-width: 62ch; font-size: var(--fs-lead); color: var(--navy); font-weight: 600; line-height: 1.5; }
+
+  /* ══════════════════ SECTION 8 — what we are launching ══════════════════ */
+  .launch-head { max-width: 62ch; }
+  .feature-list { list-style: none; margin: clamp(28px, 3.5vw, 40px) 0 clamp(32px, 3.5vw, 48px); padding: 0; border-top: 1px solid var(--navy-hairline); }
+  .feature-list li { padding: 20px 0; border-bottom: 1px solid var(--navy-hairline); font-size: var(--fs-md); color: var(--white); max-width: 84ch; line-height: 1.55; }
+  .origin-quote { max-width: 66ch; }
+  .origin-quote p:first-child { font-size: var(--fs-md); color: var(--on-dark); line-height: 1.6; margin-bottom: 18px; }
+  .origin-quote blockquote { margin: 0; padding-left: 22px; border-left: 3px solid var(--teal-soft); }
+  .origin-quote blockquote p { font-size: var(--fs-stat); font-weight: 600; color: var(--white); font-style: italic; line-height: 1.45; }
+  .origin-quote blockquote p:last-child { font-style: normal; color: var(--teal-soft); }
+
+  /* ══════════════════ SECTION 9 — is this a fit for you? ══════════════════ */
+  .fit-head { max-width: 62ch; }
+  .fit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: clamp(28px, 3.5vw, 40px) 0 clamp(28px, 3vw, 40px); align-items: stretch; }
+  .fit-card { border-radius: 16px; padding: 28px 30px; }
+  .fit-card--yes { background: var(--mint); border: 1px solid rgba(0,97,106,0.16); }
+  .fit-card--no  { background: var(--white); border: 1px solid var(--hairline); }
+  .fit-card-head { font-size: var(--fs-md); font-weight: 700; color: var(--navy); margin-bottom: 18px; }
+  .fit-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+  .fit-list li { display: flex; gap: 12px; align-items: flex-start; font-size: var(--fs-base); color: var(--body); line-height: 1.5; }
+  .fit-mark { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; margin-top: 1px; }
+  .fit-card--yes .fit-mark { background: var(--teal-deep); color: var(--white); }
+  .fit-card--no .fit-mark { background: var(--muted-soft); color: var(--white); }
+  .fit-close { max-width: 68ch; padding-left: 22px; border-left: 3px solid var(--teal-deep); }
+  .fit-close p { font-size: var(--fs-stat); font-weight: 600; color: var(--navy); line-height: 1.4; }
+  @media (max-width: 760px) { .fit-grid { grid-template-columns: 1fr; } }
+
+  /* ══════════════════ SECTION 10 — why is this free ══════════════════ */
+  .why-free-head { max-width: 60ch; }
+  .why-free-body { max-width: 62ch; margin-top: clamp(20px, 2.5vw, 28px); display: grid; gap: 18px; }
+  .why-free-body p { font-size: var(--fs-lead); color: var(--navy); line-height: 1.5; margin: 0; }
+
+  /* ══════════════════ SECTION 11 — the part that is hard to say ══════════════════ */
+  .confession-head { max-width: 62ch; }
+  .confession-list { list-style: none; margin: clamp(28px, 3.5vw, 40px) 0 clamp(32px, 3.5vw, 48px); padding: 0; display: grid; gap: 4px; }
+  .confession-list li { padding: 16px 0; border-top: 1px solid var(--navy-hairline); font-size: var(--fs-lead); font-style: italic; color: var(--white); max-width: 84ch; line-height: 1.5; }
+  .confession-close { max-width: 66ch; padding-left: 22px; border-left: 3px solid var(--teal-soft); }
+  .confession-close p { font-size: var(--fs-md); font-weight: 600; color: var(--white); line-height: 1.55; font-style: normal; }
+
+  /* ══════════════════ SECTION 12 — how we help, starting now ══════════════════ */
+  .help-head { max-width: 62ch; }
+
+  /* ══════════════════ SECTION 13 — closer than the system allows ══════════════════ */
+  .closer-head { max-width: 60ch; }
+  .closer-body { max-width: 62ch; margin-top: clamp(20px, 2.5vw, 28px); display: grid; gap: 18px; }
+  .closer-body p { font-size: var(--fs-lead); color: var(--navy); line-height: 1.55; margin: 0; }
+
+  /* ══════════════════ SECTION 14 — what we will cover on the day ══════════════════ */
+  .cover-head { max-width: 62ch; }
+
+  /* ══════════════════ SECTION 15 — who is teaching ══════════════════ */
+  .physicians-head { max-width: 62ch; }
+  .physician-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: clamp(32px, 4vw, 48px); }
+  .physician-card { text-align: left; }
+  .physician-avatar-frame { width: 128px; height: 128px; border-radius: 50%; overflow: hidden; box-shadow: 0 0 0 4px var(--mint), 0 0 0 7px rgba(0,97,106,0.14); margin-bottom: 20px; }
+  .physician-avatar-frame img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; }
+  .physician-name { font-size: var(--fs-md); font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+  .physician-bio { font-size: var(--fs-sm); color: var(--muted); line-height: 1.55; max-width: 34ch; }
+  @media (max-width: 760px) { .physician-grid { grid-template-columns: 1fr; gap: 32px; } .physician-card { display: flex; gap: 24px; align-items: flex-start; text-align: left; } .physician-avatar-frame { margin-bottom: 0; flex-shrink: 0; } }
+  @media (max-width: 460px) { .physician-card { flex-direction: column; } .physician-avatar-frame { width: 104px; height: 104px; } }
+
+  /* ══════════════════ SECTION 16 — bring a question ══════════════════ */
+  .question-box { max-width: 68ch; }
+  .question-box .lead { color: var(--navy); font-weight: 600; margin-bottom: 16px; }
+
+  /* ══════════════════ SECTION 17 — the form ══════════════════ */
+  .register-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 20px 56px; align-items: start; }
+  .register-copy .lead { margin-top: 14px; }
+  .register-under { font-size: var(--fs-sm); color: var(--on-dark); max-width: 44ch; margin-top: 16px; }
+  @media (max-width: 860px) { .register-grid { grid-template-columns: 1fr; gap: 32px; } }
+
+  /* Placeholder form mock. .form-embed is the wrapper meant to receive the
+     real GHL <iframe> later: no fixed height, no overflow:hidden, so a
+     cross-origin iframe at its own native height won't be clipped. */
+  .form-embed { background: var(--white); border-radius: 16px; padding: 26px 26px 24px; box-shadow: 0 24px 56px -20px rgba(0,0,0,0.35); }
+  .form-embed:focus-within { box-shadow: 0 24px 56px -20px rgba(0,0,0,0.35), 0 0 0 3px var(--teal-soft); }
+  .form-preview-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--fs-caption);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    border: 1px dashed var(--muted-soft);
+    border-radius: 20px;
+    padding: 6px 12px;
+    margin-bottom: 18px;
+  }
+  .ph-field { margin-bottom: 16px; }
+  .ph-field label { display: block; font-size: var(--fs-sm); font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+  .ph-field .optional-tag { font-weight: 500; color: var(--muted); text-transform: none; letter-spacing: 0; }
+  .ph-field input,
+  .ph-field textarea,
+  .ph-field select {
+    width: 100%;
+    font-family: var(--font);
+    font-size: var(--fs-base);
+    color: var(--navy);
+    background: var(--mint);
+    border: 1px solid var(--hairline);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .ph-field textarea { resize: vertical; min-height: 70px; }
+  .form-embed .btn-primary { width: 100%; margin-top: 6px; }
+
+  /* ══════════════════ SECTION 18 — what happens next ══════════════════ */
+  .steps-head { max-width: 62ch; }
+  .steps-list { list-style: none; margin: clamp(28px, 3.5vw, 40px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .step-item { border-top: 3px solid var(--teal-deep); padding-top: 16px; }
+  .step-num { display: block; font-size: var(--fs-index); font-weight: 800; color: var(--teal-deep); line-height: 1; margin-bottom: 10px; font-variant-numeric: tabular-nums; }
+  .step-item p { margin: 0; font-size: var(--fs-base); color: var(--navy); line-height: 1.5; max-width: 30ch; }
+  @media (max-width: 700px) { .steps-list { grid-template-columns: 1fr; gap: 24px; } }
+
+  /* ══════════════════ SECTION 19 — the honest part ══════════════════ */
+  .honest-head { max-width: 62ch; }
+  .honest-body { max-width: 62ch; margin-top: clamp(20px, 2.5vw, 28px); display: grid; gap: 18px; }
+  .honest-body p { font-size: var(--fs-lead); color: var(--navy); line-height: 1.55; margin: 0; }
+  .honest-body p strong { color: var(--teal-deep); }
+
+  /* ══════════════════ FOOTER ══════════════════ */
+  .site-footer { background: var(--navy); color: var(--on-dark); }
+  .footer-disclaimer { border-top: 1px solid var(--navy-hairline); padding: clamp(28px, 4vw, 44px) 0; }
+  .footer-disclaimer p { font-size: var(--fs-sm); color: var(--on-dark); line-height: 1.6; max-width: 76ch; margin: 0; }
+  .footer-disclaimer strong { color: var(--white); }
+  .footer-bottom { padding: 20px 0 clamp(28px, 4vw, 40px); }
+  .footer-copy { font-size: var(--fs-caption); color: var(--muted-soft); }
+
+  /* ══════════════════ Responsive: below 480px, general tightening ══════════════════ */
+  @media (max-width: 480px) {
+    .section { padding: clamp(40px, 9vw, 56px) 0; }
+    .curriculum-row { padding: 14px 0; }
+    .value-row { padding: 18px 0; }
+  }
+
+  /* ── Mid-page CTA ──────────────────────────────────────────────────────
+     The page runs to roughly 17 desktop screens and 24 on a phone. A single
+     button in the hero means anyone past the first screen has no way to act
+     until the form at the very bottom. Two rests are placed where the reader
+     has just been given a reason: after the agenda, once they know exactly
+     what the hour contains, and after the fit lists, once they have decided
+     it is for them. Copy is the hero's own button text, nothing new added. */
+  .cta-rest {
+    margin-top: clamp(40px, 5vw, 60px);
+    padding-top: clamp(28px, 3.5vw, 38px);
+    border-top: 1px solid var(--hairline);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px 24px;
+  }
+  .cta-rest p {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--muted);
+    max-width: 34ch;
+  }
+  .section-navy .cta-rest { border-top-color: rgba(255,255,255,0.16); }
+  .section-navy .cta-rest p { color: var(--on-dark); }
+  @media (max-width: 560px) {
+    .cta-rest { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header class="nav" role="banner">
+  <div class="container">
+    <img src="https://storage.googleapis.com/msgsndr/pxP2dAXBeEhbO2yDoKw9/media/68151ff80013190ea303ebc8.png" alt="Rheumatologist OnCall">
+  </div>
+</header>
+
+<main id="main-content">
+
+<!-- ══════════════════ HERO ══════════════════ -->
+<section class="section-white hero" aria-labelledby="hero-heading">
+  <div class="container">
+    <div class="hero-grid">
+
+      <div class="hero-copy-top">
+        <p class="eyebrow">The big launch &middot; The Remission Circle opens [MONTH] &middot; Free live session [DATE]</p>
+        <h1 id="hero-heading">We built this <span class="mark">for&nbsp;you.</span> Let us walk you through it.</h1>
+        <p class="lead">The Remission Circle is real, ongoing help for living with an autoimmune condition. Three board-certified physicians, a structured year of teaching, and your questions answered out loud.</p>
+        <p class="lead">On [DATE] we are going to walk you through the whole thing, live, in 60 minutes. Then you decide if it is for you.</p>
+        <!-- Registration happens in Section 17 on this page, so every CTA
+             scrolls there rather than leaving. [REG LINK] in the copy doc is
+             the address the EMAILS point at, which is this page itself. If
+             the form is ever hosted elsewhere, swap these four hrefs. -->
+        <a class="btn btn-primary" href="#register">Save my seat</a>
+        <p class="under-btn">Free. 60 minutes. Nothing to buy to attend, and we send you the recording either way.</p>
+      </div>
+
+      <div class="hero-device">
+        <div class="call-window">
+
+          <div class="call-header">
+            <span class="call-header-icon">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4Z"/></svg>
+            </span>
+            <span class="call-header-title">Rheumatologist OnCall</span>
+            <span class="call-live">Live session</span>
+          </div>
+
+          <div class="call-meta">
+            <span class="call-meta-item">
+              <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor" aria-hidden="true"><path d="M17 9V7a5 5 0 0 0-10 0v2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2ZM9 7a3 3 0 0 1 6 0v2H9V7Z"/></svg>
+              Encrypted
+            </span>
+            <span class="call-meta-rec">Recording</span>
+            <span class="call-meta-view">
+              <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor" aria-hidden="true"><path d="M4 4h7v7H4V4Zm9 0h7v7h-7V4ZM4 13h7v7H4v-7Zm9 0h7v7h-7v-7Z"/></svg>
+              Gallery view
+            </span>
+          </div>
+
+          <div class="call-grid">
+            <div class="call-tile call-tile--wide call-tile--host">
+              <img src="assets/dr-girnita-hero-1200.jpg" alt="Dr. Diana Girnita, MD, PhD" width="1320" height="990">
+              <span class="call-name call-name--host"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V7a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3Z"/><path d="M19 11a1 1 0 1 0-2 0 5 5 0 0 1-10 0 1 1 0 1 0-2 0 7 7 0 0 0 6 6.92V21a1 1 0 1 0 2 0v-3.08A7 7 0 0 0 19 11Z"/></svg>Dr. Girnita</span>
+            </div>
+            <div class="call-tile call-tile--sq">
+              <img src="assets/dr-devalla-tile-800.jpg" alt="Dr. Vishnuteja Devalla, MD" width="700" height="560">
+              <span class="call-name"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V7a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3Z"/><path d="M19 11a1 1 0 1 0-2 0 5 5 0 0 1-10 0 1 1 0 1 0-2 0 7 7 0 0 0 6 6.92V21a1 1 0 1 0 2 0v-3.08A7 7 0 0 0 19 11Z"/></svg>Dr. Devalla</span>
+            </div>
+            <div class="call-tile call-tile--sq">
+              <img src="assets/dr-titianu-tile-800.jpg" alt="Dr. Mirela Titianu, MD" width="700" height="560">
+              <span class="call-name"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V7a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3Z"/><path d="M19 11a1 1 0 1 0-2 0 5 5 0 0 1-10 0 1 1 0 1 0-2 0 7 7 0 0 0 6 6.92V21a1 1 0 1 0 2 0v-3.08A7 7 0 0 0 19 11Z"/></svg>Dr. Titianu</span>
+            </div>
+          </div>
+
+          <div class="call-qa">
+            <span class="call-qa-head">
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M18 2a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-4.59l-3.7 3.7A1 1 0 0 1 8 16v-3H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12Z"/></svg>
+              Q&amp;A
+            </span>
+            <p class="call-qa-q"><span class="call-qa-who">Attendee</span> What does remission actually mean?</p>
+          </div>
+
+          <div class="call-bar">
+            <div class="call-btn-group">
+              <span class="call-btn"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V7a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3Z"/><path d="M19 11a1 1 0 1 0-2 0 5 5 0 0 1-10 0 1 1 0 1 0-2 0 7 7 0 0 0 6 6.92V21a1 1 0 1 0 2 0v-3.08A7 7 0 0 0 19 11Z"/></svg></span>
+              <span class="call-btn-label">Audio</span>
+            </div>
+            <div class="call-btn-group">
+              <span class="call-btn"><svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4Z"/></svg></span>
+              <span class="call-btn-label">Video</span>
+            </div>
+            <div class="call-btn-group">
+              <span class="call-btn"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M12 3 7 8h3v7h4V8h3l-5-5ZM4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2h-2v2H6v-2H4Z"/></svg></span>
+              <span class="call-btn-label">Share</span>
+            </div>
+            <div class="call-btn-group">
+              <span class="call-btn"><svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20ZM8.5 9.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm4 0a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM12 18a5 5 0 0 1-4.58-3h9.16A5 5 0 0 1 12 18Z"/></svg></span>
+              <span class="call-btn-label">React</span>
+            </div>
+            <div class="call-btn-group">
+              <span class="call-btn"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M18 2a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-4.59l-3.7 3.7A1 1 0 0 1 8 16v-3H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12Z"/></svg></span>
+              <span class="call-btn-label">Q&amp;A</span>
+            </div>
+            <span class="call-leave">Leave</span>
+          </div>
+
+        </div>
+
+        <p class="call-caption"><strong>[DATE]</strong> at [TIME] [TZ]</p>
+      </div>
+
+    </div>
+
+    <div class="hero-trust-row">
+      <ul class="trust-strip">
+        <li>3 board-certified physicians</li>
+        <li>A full year of structured teaching</li>
+        <li>Your questions answered</li>
+        <li>Free to attend</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ SECTION 2 — this is for you ══════════════════ -->
+<section class="section-mint section" aria-labelledby="s2-heading">
+  <div class="container">
+
+    <div class="struggle-head">
+      <h2 id="s2-heading">If any of this is your life, this was made for you</h2>
+      <p class="lead">You do not need a diagnosis to be in the right place.</p>
+    </div>
+
+    <ol class="struggle-list">
+      <li class="struggle-item">
+        <span class="struggle-index">01</span>
+        <p class="struggle-text"><strong>Still trying to get a name for it.</strong> More than one specialist, tests that said nothing, and somebody suggesting it was stress, your weight, or your age. You are not imagining it.</p>
+      </li>
+      <li class="struggle-item">
+        <span class="struggle-index">02</span>
+        <p class="struggle-text"><strong>Newly diagnosed.</strong> It came with a prescription in twelve minutes, and nobody had time to explain what it means for your job, your family, the next thirty years.</p>
+      </li>
+      <li class="struggle-item">
+        <span class="struggle-index">03</span>
+        <p class="struggle-text"><strong>Unsure about your treatment.</strong> You are taking something nobody explained.</p>
+      </li>
+      <li class="struggle-item">
+        <span class="struggle-index">04</span>
+        <p class="struggle-text"><strong>Lost in the advice about how to live.</strong> Forty contradictory things about what to eat.</p>
+      </li>
+      <li class="struggle-item">
+        <span class="struggle-index">05</span>
+        <p class="struggle-text"><strong>Wanting the whole picture.</strong> Food, movement, sleep and hormones taken seriously alongside your medication, not instead of it.</p>
+      </li>
+      <li class="struggle-item struggle-item--break">
+        <span class="struggle-index">06</span>
+        <p class="struggle-text">Your appointment is months away, the questions started weeks ago, you are exhausted in a way sleep does not touch, and you cancelled something again and apologised again.</p>
+      </li>
+    </ol>
+
+    <div class="struggle-close">
+      <p>None of that is a failure of effort on your part. It is what happens when a lifelong condition meets a system built for twelve-minute visits. So we built something that sits in the gap.</p>
+    </div>
+
+    <div class="struggle-coda">
+      <div class="coda-avatars">
+        <img src="assets/dr-girnita-sq-560.jpg" alt="Dr. Diana Girnita">
+        <img src="assets/dr-devalla-sq-560.jpg" alt="Dr. Vishnuteja Devalla">
+        <img src="assets/dr-titianu-sq-560.jpg" alt="Dr. Mirela Titianu">
+      </div>
+      <div class="coda-text">
+        <p>Three physicians who treat this every day, answering your questions properly. Not influencers. Not a search result. Not an AI that has never examined anybody.</p>
+        <p>It is the Reddit thread where the doctors actually reply.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════ SECTION 3 — six things, and what they mean ══════════════════ -->
+<section class="section-white section" aria-labelledby="s3-heading">
+  <div class="container">
+
+    <div class="table-head">
+      <p class="eyebrow">What you actually get, and what it means</p>
+      <h2 id="s3-heading">Six things, and why each one matters to you</h2>
+    </div>
+
+    <div class="value-table">
+      <div class="value-table-labels">
+        <div>What you get</div>
+        <div>What that means for you</div>
+      </div>
+
+      <div class="value-row">
+        <p class="value-what">A live hour every month with all three physicians</p>
+        <p class="value-means">Your question, answered out loud, by the doctor who covers that area. Not a forum reply. A rheumatologist thinking through it while you listen.</p>
+      </div>
+      <div class="value-row">
+        <p class="value-what">Written Q&amp;A with the team</p>
+        <p class="value-means">You can ask between sessions and get a clear written answer, instead of waiting four months or guessing from a search result.</p>
+      </div>
+      <div class="value-row">
+        <p class="value-what">New lessons every week</p>
+        <p class="value-means">You are never more than a few days from something useful, and none of it is internet myth. It is written by the physicians who treat this.</p>
+      </div>
+      <div class="value-row">
+        <p class="value-what">A library of recorded sessions and guides</p>
+        <p class="value-means">The 2am library. When something frightens you at midnight, there is a physician&rsquo;s version to read instead of a forum.</p>
+      </div>
+      <div class="value-row">
+        <p class="value-what">A private community of people with the same conditions</p>
+        <p class="value-means">Nobody needs the fatigue explained. Nobody says &ldquo;but you don&rsquo;t look sick.&rdquo; You can say the hard thing and be understood immediately.</p>
+      </div>
+      <div class="value-row">
+        <p class="value-what">A monthly theme, not scattered tips</p>
+        <p class="value-means">By the end of a year you understand your own disease properly, rather than collecting fragments you forget by the following week.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════ SECTION 4 — a full year, already planned ══════════════════ -->
+<section class="section-navy section" aria-labelledby="s4-heading">
+  <div class="container">
+
+    <div class="curriculum-head">
+      <p class="eyebrow">A full year, already planned</p>
+      <h2 id="s4-heading">You are not joining a feed. You are joining a curriculum.</h2>
+      <p class="lead">Most health communities are a stream of posts. This is a structured year, mapped in advance, so your understanding builds instead of scattering.</p>
+    </div>
+
+    <ol class="curriculum-grid">
+      <li class="curriculum-row"><span class="curriculum-month">Month 1</span><p class="curriculum-title">Welcome: who we are and where we are going</p></li>
+      <li class="curriculum-row"><span class="curriculum-month">Month 2</span><p class="curriculum-title">Eat to calm the fire: food, movement and inflammation</p></li>
+      <li class="curriculum-row"><span class="curriculum-month">Month 3</span><p class="curriculum-title">The gut and immune connection</p></li>
+      <li class="curriculum-row"><span class="curriculum-month">Month 4</span><p class="curriculum-title">Decoding your labs: positive ANA and what your bloodwork really means</p></li>
+      <li class="curriculum-row"><span class="curriculum-month">Month 5</span><p class="curriculum-title">GLP-1 medications and autoimmune disease</p></li>
+      <li class="curriculum-row"><span class="curriculum-month">Month 6</span><p class="curriculum-title">Rheumatoid and psoriatic arthritis</p></li>
+      <li class="curriculum-row"><span class="curriculum-month">Month 7</span><p class="curriculum-title">Can you have an autoimmune disease with normal labs?</p></li>
+      <li class="curriculum-row"><span class="curriculum-month">Month 8</span><p class="curriculum-title">Menopause, hormones and autoimmune disease</p></li>
+      <li class="curriculum-row"><span class="curriculum-month">Month 9</span><p class="curriculum-title">Ankylosing spondylitis: the back pain missed for years</p></li>
+      <li class="curriculum-row"><span class="curriculum-month">Month 10</span><p class="curriculum-title">CAR-T and the new drugs changing autoimmune disease</p></li>
+      <li class="curriculum-row"><span class="curriculum-month">Month 11</span><p class="curriculum-title">Supplements: what helps, what is hype, what to skip</p></li>
+      <li class="curriculum-row"><span class="curriculum-month">Month 12</span><p class="curriculum-title">Choosing the right treatment: medications, biologic safety and smart decisions</p></li>
+    </ol>
+
+    <div class="curriculum-close">
+      <p>Every month is led by whichever of the three of us knows that subject best. You hear from each of us properly across the year.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════ SECTION 5 — what real help actually looks like ══════════════════ -->
+<section class="section-mint-deep section" aria-labelledby="s5-heading">
+  <div class="container">
+
+    <div class="scenario-head">
+      <h2 id="s5-heading">Not a course. Somewhere to go.</h2>
+    </div>
+
+    <ul class="scenario-list">
+      <li class="scenario-item"><p class="scenario-text">When a new medication starts and you spend three weeks wondering whether what you are feeling is normal, you have somewhere to ask.</p></li>
+      <li class="scenario-item"><p class="scenario-text">When your labs come back and nobody has time to explain them, there is an explanation waiting, in plain language, from a rheumatologist.</p></li>
+      <li class="scenario-item"><p class="scenario-text">When you read something frightening at 2am, you have a physician&rsquo;s version to compare it against.</p></li>
+      <li class="scenario-item"><p class="scenario-text">When someone says &ldquo;but you don&rsquo;t look sick&rdquo;, there is a room full of people who need no explanation at all.</p></li>
+      <li class="scenario-item"><p class="scenario-text">When your appointment is four months away, you are not on your own until then.</p></li>
+      <li class="scenario-item"><p class="scenario-text">And when you finally sit down in that appointment, you walk in knowing what to ask.</p></li>
+    </ul>
+
+    <div class="scenario-close">
+      <p>That last one matters more than anything else here. We are not replacing your doctor. We are helping you get more out of the one you have.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════ SECTION 6 — the agenda ══════════════════ -->
+<section class="section-white section" aria-labelledby="s6-heading">
+  <div class="container">
+
+    <div class="agenda-head">
+      <p class="eyebrow">Exactly what happens in the 60 minutes</p>
+      <h2 id="s6-heading">The agenda</h2>
+    </div>
+
+    <ol class="agenda-timeline">
+      <li class="agenda-item">
+        <span class="agenda-range">Minutes 0 to 10</span>
+        <p class="agenda-text">Why we built this, and the problem it exists to solve. A rheumatology appointment is twelve minutes, roughly every three months. The questions arrive in the other ninety days.</p>
+      </li>
+      <li class="agenda-item">
+        <span class="agenda-range">Minutes 10 to 25</span>
+        <p class="agenda-text">The teaching. What &ldquo;remission&rdquo; actually means, how your doctor measures it, and why it is not the same as cured. This is the single thing we are asked about most, and most people have never had it explained.</p>
+      </li>
+      <li class="agenda-item">
+        <span class="agenda-range">Minutes 25 to 32</span>
+        <p class="agenda-text">Dr. Devalla on the back pain that gets missed for years, and why some back pain is worse after rest.</p>
+      </li>
+      <li class="agenda-item">
+        <span class="agenda-range">Minutes 32 to 40</span>
+        <p class="agenda-text">Dr. Titianu on what genuinely changes inflammation. Food, weight and the newer medications, and what is simply being sold to you.</p>
+      </li>
+      <li class="agenda-item">
+        <span class="agenda-range">Minutes 40 to 53</span>
+        <p class="agenda-text">Your questions. Sent in advance, grouped, answered live by whichever of us covers that area.</p>
+      </li>
+      <li class="agenda-item">
+        <span class="agenda-range">Minutes 53 to 60</span>
+        <p class="agenda-text">We show you The Remission Circle itself. What is inside, what it costs, and who it is not for.</p>
+      </li>
+    </ol>
+
+    <div class="agenda-honesty">
+      <p class="eyebrow">Do not skip this part</p>
+      <p>That last seven minutes is a pitch, and we are telling you now so it is not a surprise. If you do not want it, leave at minute 53. You will have had the useful part, and we will still send you the recording.</p>
+    </div>
+
+    <div class="cta-rest">
+      <a class="btn btn-primary" href="#register">Save my seat</a>
+      <p>Free to attend. The recording comes to you either way.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════ SECTION 7 — what you leave with ══════════════════ -->
+<section class="section-mint section" aria-labelledby="s7-heading">
+  <div class="container">
+
+    <div class="takeaway-head">
+      <h2 id="s7-heading">What you get out of the hour, whether or not you join anything</h2>
+    </div>
+
+    <ul class="dot-list">
+      <li><p>A clear definition of remission, and the specific question to ask your own doctor about where you stand against it</p></li>
+      <li><p>The distinction between mechanical and inflammatory back pain, which is what determines whether you get sent to physiotherapy or to a rheumatologist</p></li>
+      <li><p>A straight answer on food, weight and the newer medications, from a physician who is board-certified in obesity medicine</p></li>
+      <li><p>Your question answered, if it is one of the ones we get to</p></li>
+      <li><p>The recording, permanently, whether you attend or not</p></li>
+    </ul>
+
+    <p class="takeaway-plain">That is the whole offer for attending. There is no upsell to reach the useful part, and no email sequence you have to survive first.</p>
+
+  </div>
+</section>
+
+<!-- ══════════════════ SECTION 8 — what we are launching ══════════════════ -->
+<section class="section-navy section" aria-labelledby="s8-heading">
+  <div class="container">
+
+    <div class="launch-head">
+      <p class="eyebrow">The Remission Circle, in plain terms</p>
+      <h2 id="s8-heading">What we are launching</h2>
+    </div>
+
+    <ul class="feature-list">
+      <li>A monthly programme for people living with autoimmune and inflammatory disease.</li>
+      <li>One live hour every month. One topic, taught properly, by whichever of the three of us covers it. Questions submitted in advance and answered out loud.</li>
+      <li>New lessons every week. Movement, food, treatments, and decoding your labs.</li>
+      <li>A library that keeps growing. Recorded sessions and guides you can go back to whenever.</li>
+      <li>Written answers from our team.</li>
+      <li>A private community of people living with the same conditions.</li>
+      <li>Three board-certified physicians run it. Two rheumatologists and a physician trained in menopause, obesity and lifestyle medicine. Not coaches. Not a wellness programme.</li>
+    </ul>
+
+    <div class="origin-quote">
+      <p>The why, in her own words: for five years we have treated patients through Rheumatologist OnCall. In that time the same message has arrived in my inbox every week, in one form or another.</p>
+      <blockquote>
+        <p>&ldquo;My appointment is in four months and I have nowhere to ask.&rdquo;</p>
+        <p>So we built somewhere to ask.</p>
+      </blockquote>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════ SECTION 9 — is this a fit for you? ══════════════════ -->
+<section class="section-white section" aria-labelledby="s9-heading">
+  <div class="container">
+
+    <div class="fit-head">
+      <h2 id="s9-heading">Who this is for, and who it is not</h2>
+    </div>
+
+    <div class="fit-grid">
+      <div class="fit-card fit-card--yes">
+        <p class="fit-card-head">This is for you if:</p>
+        <ul class="fit-list">
+          <li><span class="fit-mark" aria-hidden="true">&#10003;</span><span>You have an autoimmune or inflammatory condition and more questions than your appointments allow</span></li>
+          <li><span class="fit-mark" aria-hidden="true">&#10003;</span><span>You are still trying to find out what is happening to you, and nobody has given it a name yet</span></li>
+          <li><span class="fit-mark" aria-hidden="true">&#10003;</span><span>You have a diagnosis but nobody explained what your medication is actually doing</span></li>
+          <li><span class="fit-mark" aria-hidden="true">&#10003;</span><span>You want to understand your own labs instead of nodding along to them</span></li>
+          <li><span class="fit-mark" aria-hidden="true">&#10003;</span><span>You are tired of sorting real information from what is being sold to you</span></li>
+          <li><span class="fit-mark" aria-hidden="true">&#10003;</span><span>You would like to be in a room where nobody needs the fatigue explained to them</span></li>
+        </ul>
+      </div>
+      <div class="fit-card fit-card--no">
+        <p class="fit-card-head">This is not for you if:</p>
+        <ul class="fit-list">
+          <li><span class="fit-mark" aria-hidden="true">&#10005;</span><span>You want individual medical advice about your own case. We cannot give it here and we will not pretend otherwise.</span></li>
+          <li><span class="fit-mark" aria-hidden="true">&#10005;</span><span>You want a diagnosis. This is education, not care.</span></li>
+          <li><span class="fit-mark" aria-hidden="true">&#10005;</span><span>You want someone to review your specific labs or change your treatment. That is your own physician&rsquo;s job and it should stay there.</span></li>
+          <li><span class="fit-mark" aria-hidden="true">&#10005;</span><span>You are looking for a cure. We do not have one, and anyone telling you otherwise is selling something.</span></li>
+          <li><span class="fit-mark" aria-hidden="true">&#10005;</span><span>You want to be told that one food, one supplement or one protocol will fix this. It will not, and we will say so.</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fit-close">
+      <p>The second list is as long as the first on purpose. We would rather you knew now than found out after joining.</p>
+    </div>
+
+    <div class="cta-rest">
+      <a class="btn btn-primary" href="#register">Save my seat</a>
+      <p>Nothing to buy to attend.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════ SECTION 10 — the obvious question ══════════════════ -->
+<section class="section-mint section" aria-labelledby="s10-heading">
+  <div class="container">
+
+    <div class="why-free-head">
+      <p class="eyebrow">The obvious question</p>
+      <h2 id="s10-heading">Why is this free?</h2>
+    </div>
+
+    <div class="why-free-body">
+      <p>Because the fastest way to explain what The Remission Circle is, is to do an hour of it in front of you.</p>
+      <p>If it is useful, some of you will want more of it and will join. Most of you will not, and that is a completely reasonable outcome. Either way you get the hour and the recording.</p>
+      <p>We would rather show you than describe it to you.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════ SECTION 11 — the part that is hard to say out loud ══════════════════ -->
+<section class="section-navy section" aria-labelledby="s11-heading">
+  <div class="container">
+
+    <div class="confession-head">
+      <h2 id="s11-heading">You might recognise some of this</h2>
+    </div>
+
+    <ul class="confession-list">
+      <li>The appointment is in four months, and the questions started in week two.</li>
+      <li>You explained your exhaustion to someone who nodded and said they get tired too.</li>
+      <li>You were told your labs were normal, and left with nothing to do next.</li>
+      <li>You were told it was stress. Or your weight. Or your age.</li>
+      <li>You were handed a diagnosis and a prescription, and no explanation of what the medication would actually do to you.</li>
+      <li>You have read the same three websites at 2am and come away less certain than when you started.</li>
+      <li>You cancelled something again, and apologised again.</li>
+      <li>And you are managing all of it alongside a job, a family, and a budget that never planned for any of this.</li>
+    </ul>
+
+    <div class="confession-close">
+      <p>None of that is a failure of effort on your part. It is what happens when a lifelong condition meets a system built for short visits.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════ SECTION 12 — how we help, starting now ══════════════════ -->
+<section class="section-white section" aria-labelledby="s12-heading">
+  <div class="container">
+
+    <div class="help-head">
+      <h2 id="s12-heading">What changes when you have somewhere to ask</h2>
+    </div>
+
+    <ul class="dot-list">
+      <li><p>A physician in the room, every month. One topic, taught in depth, by whichever of the three of us covers it. Not a summary. The version we would give a patient with an hour instead of twelve minutes.</p></li>
+      <li><p>Your question answered, not somebody else&rsquo;s. Members send questions in advance. We group them and work through as many as we can, out loud, so you hear the reasoning and not just the conclusion.</p></li>
+      <li><p>The explaining that never fits in the appointment. What your labs mean. What the medication is doing. What remission is, how it is measured, and whether it applies to you.</p></li>
+      <li><p>People who need no explanation. A room of others living with the same conditions, who already understand the fatigue, the cancelled plans and the sentence &ldquo;you don&rsquo;t look sick.&rdquo;</p></li>
+      <li><p>Something to take back to your own doctor. The point is not to replace your rheumatologist. It is to walk into your next appointment knowing what to ask.</p></li>
+    </ul>
+
+  </div>
+</section>
+
+<!-- ══════════════════ SECTION 13 — closer than the system allows ══════════════════ -->
+<section class="section-mint-deep section" aria-labelledby="s13-heading">
+  <div class="container">
+
+    <div class="closer-head">
+      <h2 id="s13-heading">Wherever you are</h2>
+    </div>
+
+    <div class="closer-body">
+      <p>Rheumatology is one of the hardest specialties to reach. Waits run into months. In much of the country there is no specialist within a sensible drive at all.</p>
+      <p>You should not need a referral, a waiting room and a four-month gap simply to understand your own condition.</p>
+      <p>The Remission Circle is online, on your schedule, and the recordings stay there. If you are rural, homebound, working shifts, or simply too tired at 6pm, none of that shuts you out.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════ SECTION 14 — what we will cover on the day ══════════════════ -->
+<section class="section-white section" aria-labelledby="s14-heading">
+  <div class="container">
+
+    <div class="cover-head">
+      <h2 id="s14-heading">The session itself</h2>
+    </div>
+
+    <ul class="dot-list">
+      <li><p>What &ldquo;remission&rdquo; really means, and how it is measured. Most people hear the word and think cured. It usually means something quite different, and the difference changes how you make decisions.</p></li>
+      <li><p>The back pain that gets missed for years. Why some back pain is worse after rest and better with movement, and why that one detail changes which specialist you are sent to. With Dr. Devalla.</p></li>
+      <li><p>What genuinely changes inflammation. Food, weight and the newer medications. What the evidence supports and what is simply being sold to you. With Dr. Titianu.</p></li>
+      <li><p>Your questions. Sent in advance, grouped, answered live.</p></li>
+      <li><p>And we will show you the programme itself, so you can decide in your own time whether it is for you.</p></li>
+    </ul>
+
+  </div>
+</section>
+
+<!-- ══════════════════ SECTION 15 — who is teaching ══════════════════ -->
+<section class="section-mint section" aria-labelledby="s15-heading">
+  <div class="container">
+
+    <div class="physicians-head">
+      <h2 id="s15-heading">Three physicians, not three coaches</h2>
+    </div>
+
+    <div class="physician-grid">
+      <div class="physician-card">
+        <div class="physician-avatar-frame"><img src="assets/dr-girnita-sq-560.jpg" alt="Dr. Diana Girnita, MD, PhD"></div>
+        <p class="physician-name">Dr. Diana Girnita, MD, PhD</p>
+        <p class="physician-bio">Double board-certified rheumatologist and physician-scientist. Founder of Rheumatologist OnCall. Labs, medications and new treatments.</p>
+      </div>
+      <div class="physician-card">
+        <div class="physician-avatar-frame"><img src="assets/dr-devalla-sq-560.jpg" alt="Dr. Vishnuteja Devalla, MD"></div>
+        <p class="physician-name">Dr. Vishnuteja Devalla, MD</p>
+        <p class="physician-bio">Board-certified rheumatologist. Gut health, inflammation, and the spondyloarthritis that goes unrecognised for years.</p>
+      </div>
+      <div class="physician-card">
+        <div class="physician-avatar-frame"><img src="assets/dr-titianu-sq-560.jpg" alt="Dr. Mirela Titianu, MD"></div>
+        <p class="physician-name">Dr. Mirela Titianu, MD</p>
+        <p class="physician-bio">Menopause-trained, obesity board-certified, lifestyle medicine certified. Food, movement, hormones and weight.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════ SECTION 16 — bring a question ══════════════════ -->
+<section class="section-white section" aria-labelledby="s16-heading">
+  <div class="container">
+    <div class="question-box">
+      <p class="eyebrow">Bring a question</p>
+      <h2 id="s16-heading" class="lead" style="font-size: var(--fs-h2); font-weight: 700; color: var(--navy);">If you could ask a rheumatologist one thing, what would it be?</h2>
+      <p class="lead">We read every question that comes in, group them into themes, and answer as many as we can live. It is optional, but these sessions are always better when people ask.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ SECTION 17 — the form ══════════════════ -->
+<section class="section-navy section" id="register" aria-labelledby="s17-heading">
+  <div class="container">
+    <div class="register-grid">
+
+      <div class="register-copy">
+        <p class="eyebrow">Save your seat</p>
+        <h2 id="s17-heading">Save your seat</h2>
+        <p class="lead">On [DATE], live, [TIME] [TZ]. Free to attend.</p>
+        <p class="register-under">Free to attend. We will send a calendar link and three reminders, and the recording afterwards whether or not you make it.</p>
+      </div>
+
+      <!--
+        AWAITING GHL FORM EMBED. No GoHighLevel form exists yet for this
+        launch — this is a styled static placeholder standing in for the
+        real registration form, showing all four fields from the copy
+        source (first name, email, two optional questions).
+
+        When the real form is built, replace the entire <form> element
+        below with GHL's <iframe> embed. The wrapper (.form-embed) is
+        already iframe-ready: no fixed height and no overflow:hidden, so
+        a cross-origin iframe at its own native height will render in
+        full without being clipped. Keep the .form-embed wrapper div in
+        place; only its contents change.
+      -->
+      <div class="form-embed">
+        <span class="form-preview-tag">Preview &middot; GHL form embed pending</span>
+        <form action="#" onsubmit="return false;">
+          <div class="ph-field">
+            <label for="ph-first-name">First name</label>
+            <input type="text" id="ph-first-name" name="first_name" autocomplete="given-name">
+          </div>
+          <div class="ph-field">
+            <label for="ph-email">Email address</label>
+            <input type="email" id="ph-email" name="email" autocomplete="email">
+          </div>
+          <div class="ph-field">
+            <label for="ph-question">If you could ask a rheumatologist one thing, what would it be? <span class="optional-tag">(optional)</span></label>
+            <textarea id="ph-question" name="question"></textarea>
+          </div>
+          <div class="ph-field">
+            <label for="ph-diagnosis">Do you have a diagnosis? <span class="optional-tag">(optional)</span></label>
+            <select id="ph-diagnosis" name="diagnosis_status">
+              <option value="">Select one&hellip;</option>
+              <option value="yes">Yes</option>
+              <option value="not-yet">Not yet</option>
+              <option value="not-sure">I am not sure</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Save my seat</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ SECTION 18 — what happens next ══════════════════ -->
+<section class="section-mint section" aria-labelledby="s18-heading">
+  <div class="container">
+    <div class="steps-head">
+      <h2 id="s18-heading">What happens next</h2>
+    </div>
+    <ol class="steps-list">
+      <li class="step-item"><span class="step-num">1</span><p>A confirmation email with a calendar link, straight away.</p></li>
+      <li class="step-item"><span class="step-num">2</span><p>Reminders three days, one day and one hour before.</p></li>
+      <li class="step-item"><span class="step-num">3</span><p>The recording, sent to everyone who registered. Whether you made it or not.</p></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ══════════════════ SECTION 19 — the honest part ══════════════════ -->
+<section class="section-white section" aria-labelledby="s19-heading">
+  <div class="container">
+    <div class="honest-head">
+      <h2 id="s19-heading">What this is, and what it is not</h2>
+    </div>
+    <div class="honest-body">
+      <p>This is education. A proper explanation from three physicians who treat these conditions every day.</p>
+      <p>It is not medical care. We will not diagnose anyone, we cannot look at your individual results, and nothing we say replaces the doctor who knows your history.</p>
+      <p><strong>What it is good for:</strong> understanding your own condition well enough to have a far better conversation at your next appointment.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ══════════════════ FOOTER ══════════════════ -->
+<footer class="site-footer" role="contentinfo">
+  <div class="container footer-disclaimer">
+    <p><strong>Medical disclaimer.</strong> The Remission Circle and this session are education and community, not medical care. What we share is general education, not individualized medical advice, diagnosis or treatment, and it does not create a physician-patient relationship or replace your own physician.</p>
+  </div>
+  <!--
+    The logo PNG's wordmark renders navy-on-transparent. Placed on this
+    navy footer it measured 1.0:1 contrast (verified via WCAG relative-
+    luminance formula) — completely invisible, not just faint. Dropped
+    rather than patched with a filter, since the nav already carries the
+    mark once on white, where it reads correctly.
+  -->
+  <div class="container footer-bottom">
+    <p class="footer-copy">&copy; Rheumatologist OnCall. The Remission Circle opens [MONTH].</p>
+  </div>
+</footer>
+
+</body>
+</html>
