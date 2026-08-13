@@ -565,17 +565,31 @@
      for contrast. The image is an empty chair by a window, no people in it
      by design. Nothing on this page may depict a person who could be taken
      for a real ROC patient. See img/CREDITS.md. */
+  /* Contained, not full-bleed. The first version ran the photograph to the
+     viewport edges with `width: 100vw` while every other element on the page
+     is capped at --container, so on a wide monitor it was the only thing
+     touching the glass and read as a mistake. It also carried the section's
+     own top padding above it, which showed as a stray band of mint between
+     the hero and the image, and a max-height that cropped a 21:9 photograph
+     down to a ~360px slice, so you saw a sliver rather than a picture.
+     Now: content width, the photograph's own aspect ratio, no crop. */
   .struggle-figure {
     margin: 0 0 clamp(32px, 4vw, 52px);
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
-    max-height: clamp(200px, 26vw, 360px);
+    border-radius: 14px;
     overflow: hidden;
   }
   .struggle-figure img {
-    width: 100%; height: 100%;
-    object-fit: cover; object-position: 50% 62%;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 21 / 9;
+    object-fit: cover;
+    object-position: 50% 58%;
     display: block;
+  }
+  @media (max-width: 640px) {
+    /* Portrait screens cannot carry a 21:9 frame: the chair becomes a smear.
+       Squarer crop keeps the subject legible. */
+    .struggle-figure img { aspect-ratio: 16 / 10; object-position: 38% 58%; }
   }
   .struggle-head { max-width: 62ch; margin-bottom: clamp(28px, 3vw, 40px); }
   .struggle-head .lead { margin-top: 14px; }
