@@ -89,6 +89,8 @@
     --radius: 10px;
     --container: 1080px;
     --section-pad: clamp(48px, 6vw, 80px);
+    --section-pad-lg: clamp(68px, 8.5vw, 118px);
+    --section-pad-sm: clamp(40px, 5vw, 60px);
 
     --fs-h1:      clamp(2.25rem, 1.9vw + 1.65rem, 3.25rem);
     --fs-h2:      clamp(1.625rem, 1.3vw + 1.2rem, 2.25rem);
@@ -113,7 +115,12 @@
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
-  img { max-width: 100%; display: block; }
+  /* height:auto matters: without it an <img> with width/height attributes
+     and a CSS width takes its HEIGHT ATTRIBUTE as a presentational hint,
+     which stretched the section-8 photo to 401x1045. Verified live via
+     Playwright evaluate before fixing. Selectors that set an explicit
+     height (.call-tile img, .struggle-figure img) still win on specificity. */
+  img { max-width: 100%; display: block; height: auto; }
   a { color: inherit; }
 
   .container {
@@ -145,8 +152,19 @@
   }
   .skip-link:focus { top: 12px; }
 
-  :focus-visible { outline: 3px solid var(--teal-soft); outline-offset: 3px; }
-  .section-navy :focus-visible { outline-color: var(--teal-soft); }
+  /* Focus = box-shadow ring, never outline: outlines ignore border-radius
+     and draw square corners over rounded controls. Two-layer ring (ground-
+     colour gap + teal) stays visible on any fill, including the teal CTA.
+     Ring teal-deep on light ground (7.20:1 vs white), teal-soft on navy
+     (9.39:1 vs navy): both measured. Form fields keep their own ring. */
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--white), 0 0 0 6px var(--teal-deep);
+  }
+  .section-navy :focus-visible,
+  .site-footer :focus-visible {
+    box-shadow: 0 0 0 3px var(--navy), 0 0 0 6px var(--teal-soft);
+  }
 
   .eyebrow {
     display: inline-flex;
@@ -170,6 +188,12 @@
   .section-navy .eyebrow::before { background: var(--teal-soft); }
 
   .section { padding: var(--section-pad) 0; }
+  /* Vertical rhythm is graded, not uniform: sections meant to land hard
+     (the "this is your life" band, the recognition list, the register
+     band) get more air; short interstitial or closing-note bands get
+     less. Everything else keeps the standard beat. */
+  .section--lg    { padding: var(--section-pad-lg) 0; }
+  .section--quiet { padding: var(--section-pad-sm) 0; }
   .section-white     { background: var(--white); }
   .section-mint      { background: var(--mint); }
   .section-mint-deep { background: var(--mint-deep); }
@@ -506,6 +530,24 @@
   }
 
   /* ══════════════════ SECTION 2 — this is for you ══════════════════ */
+  /* ── Section 2 opening image ───────────────────────────────────────────
+     Full-bleed band above the heading. Deliberately NOT a text overlay: the
+     copy here is the most important on the page and must not fight a photo
+     for contrast. The image is an empty chair by a window, no people in it
+     by design. Nothing on this page may depict a person who could be taken
+     for a real ROC patient. See img/CREDITS.md. */
+  .struggle-figure {
+    margin: 0 0 clamp(32px, 4vw, 52px);
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    max-height: clamp(200px, 26vw, 360px);
+    overflow: hidden;
+  }
+  .struggle-figure img {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: 50% 62%;
+    display: block;
+  }
   .struggle-head { max-width: 62ch; margin-bottom: clamp(28px, 3vw, 40px); }
   .struggle-head .lead { margin-top: 14px; }
 
@@ -548,43 +590,133 @@
   }
 
   /* ══════════════════ SECTION 3 — six things, and what they mean ══════════════════ */
+  /* Redesigned 2026-08-13: the six per-row mint pills read as six repeats
+     of the same small blob. The rows now live on ONE grid (display:
+     contents on each row), so the right-hand cells fuse into a single
+     continuous mint column running the full height of the table. "The
+     right-hand column is the reason anyone joins" (source note) is now
+     literally one weighted column, and each row's pair stays height-
+     locked because both cells share a grid row. */
   .table-head { margin-bottom: clamp(28px, 3vw, 40px); max-width: 62ch; }
-  .value-table { border-top: 1px solid var(--hairline); }
-  .value-table-labels { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 32px; padding: 0 0 14px; font-size: var(--fs-eyebrow); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted-soft); }
-  .value-row { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 32px; padding: 26px 0; border-bottom: 1px solid var(--hairline); align-items: start; }
-  .value-what { font-size: var(--fs-md); font-weight: 700; color: var(--navy); line-height: 1.35; max-width: 36ch; }
-  /* "The right-hand column is the reason anyone joins" (source note) —
-     weighted visually: mint fill, larger measure, and it is allowed to
-     run its full column width instead of being capped short. */
-  .value-means { background: var(--mint); border-radius: var(--radius); padding: 20px 24px; font-size: var(--fs-md); color: var(--body); line-height: 1.6; max-width: 62ch; }
+  .value-table {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    column-gap: clamp(28px, 4vw, 52px);
+  }
+  .value-table-labels { display: contents; }
+  .value-table-labels > div {
+    padding: 0 0 14px;
+    font-size: var(--fs-eyebrow);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted); /* was muted-soft: 2.97:1 on white, failed AA. muted is 6.10:1. */
+  }
+  .value-table-labels > div:last-child { padding-left: 28px; color: var(--teal-deep); }
+  .value-row { display: contents; }
+  .value-what {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 26px 0;
+    border-top: 1px solid var(--hairline);
+    font-size: var(--fs-md);
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.35;
+  }
+  .value-what p { margin: 0; max-width: 32ch; }
+  /* Inline marks, one per row, matched to meaning. Single-weight line work,
+     currentColor stroke set to --teal-deep (the text-safe teal, 4.5:1+ on
+     white/mint per BRIEF.md), so they read as one hand-drawn set rather
+     than a mismatched icon pack. Decorative only: aria-hidden + focusable
+     false, the row text already carries the meaning. */
+  .value-icon { flex-shrink: 0; width: 22px; height: 22px; margin-top: 2px; color: var(--teal-deep); }
+
+  .value-means {
+    background: var(--mint);
+    margin: 0;
+    padding: 26px 28px;
+    font-size: var(--fs-md);
+    color: var(--body);
+    line-height: 1.6;
+  }
   .value-means strong { color: var(--teal-deep); }
+  /* Hairlines inside the fused column, teal-tinted so the column reads as
+     its own object; first/last cells carry the only rounded corners. */
+  .value-row + .value-row .value-means { border-top: 1px solid rgba(0, 97, 106, 0.12); }
+  .value-table-labels + .value-row .value-means { border-radius: var(--radius) var(--radius) 0 0; }
+  .value-row:last-of-type .value-means { border-radius: 0 0 var(--radius) var(--radius); }
 
   @media (max-width: 700px) {
+    .value-table { grid-template-columns: 1fr; }
     .value-table-labels { display: none; }
-    .value-row { grid-template-columns: 1fr; gap: 12px; padding: 22px 0; }
-    .value-what { max-width: none; }
-    .value-means { max-width: none; }
+    .value-what { padding: 22px 0 14px; }
+    .value-what p { max-width: none; }
+    /* Stacked, each meaning cell stands alone again: full radius, its own
+       label, and a gap before the next pair. */
+    .value-means { border-radius: var(--radius); padding: 20px 22px; margin-bottom: 10px; }
+    .value-row + .value-row .value-means { border-top: none; }
+    .value-table-labels + .value-row .value-means,
+    .value-row:last-of-type .value-means { border-radius: var(--radius); }
+    .value-row:last-of-type .value-means { margin-bottom: 0; }
     .value-means::before { content: "What that means for you"; display: block; font-size: var(--fs-caption); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--teal-deep); margin-bottom: 8px; }
   }
 
   /* ══════════════════ SECTION 4 — curriculum ══════════════════ */
+  /* Redesigned 2026-08-13: was a flat two-column grid of hairline rows
+     that read as 12 disconnected lines, in ROW-major order (1,2 / 3,4),
+     so neither column read as a sequence. Now a twin-rail timeline:
+     grid-auto-flow:column with 6 fixed rows puts months 1-6 down the
+     left rail and 7-12 down the right, deterministically. The rail and
+     dot vocabulary deliberately echo the agenda timeline (the page's best
+     section), in its navy variant, so the two read as one system:
+     the year is a longer version of the hour. */
   .curriculum-head { max-width: 64ch; }
   .curriculum-head .lead { margin-top: 14px; max-width: 62ch; }
   .curriculum-grid {
     list-style: none;
-    margin: clamp(28px, 3.5vw, 40px) 0 clamp(28px, 3vw, 36px);
+    margin: clamp(32px, 4vw, 48px) 0 clamp(32px, 3.5vw, 44px);
     padding: 0;
     display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(6, auto);
     grid-template-columns: 1fr 1fr;
-    column-gap: clamp(28px, 4vw, 56px);
+    column-gap: clamp(40px, 5vw, 80px);
   }
-  .curriculum-row { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: baseline; padding: 18px 0; border-top: 1px solid var(--navy-hairline); }
-  .curriculum-month { font-size: var(--fs-eyebrow); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--teal-soft); white-space: nowrap; }
-  .curriculum-title { margin: 0; font-size: var(--fs-base); font-weight: 500; color: var(--white); line-height: 1.45; max-width: 48ch; }
+  .curriculum-row {
+    position: relative;
+    padding: 0 0 clamp(22px, 2.5vw, 30px) 34px;
+    border-top: none;
+  }
+  /* Rail segment below each dot; the 6th and 12th month end their rail. */
+  .curriculum-row::before {
+    content: "";
+    position: absolute;
+    left: 5px; top: 16px; bottom: 0;
+    width: 1px;
+    background: var(--navy-hairline);
+  }
+  .curriculum-row:nth-child(6)::before,
+  .curriculum-row:nth-child(12)::before { display: none; }
+  .curriculum-row::after {
+    content: "";
+    position: absolute;
+    left: 0; top: 4px;
+    width: 11px; height: 11px;
+    box-sizing: border-box;
+    border-radius: 50%;
+    background: var(--navy);
+    border: 2px solid var(--teal-soft);
+  }
+  .curriculum-month { display: block; font-size: var(--fs-eyebrow); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--teal-soft); white-space: nowrap; margin-bottom: 5px; }
+  .curriculum-title { margin: 0; font-size: var(--fs-base); font-weight: 500; color: var(--white); line-height: 1.45; max-width: 44ch; }
   .curriculum-close { max-width: 66ch; padding-left: 22px; border-left: 3px solid var(--teal-soft); }
   .curriculum-close p { font-size: var(--fs-md); font-weight: 600; color: var(--white); line-height: 1.5; }
   @media (max-width: 760px) {
-    .curriculum-grid { grid-template-columns: 1fr; }
+    /* One continuous rail, month 1 to 12; only month 12 ends it. */
+    .curriculum-grid { grid-auto-flow: row; grid-template-rows: none; grid-template-columns: 1fr; }
+    .curriculum-row:nth-child(6)::before { display: block; }
   }
 
   /* ══════════════════ SECTION 5 — what real help looks like ══════════════════ */
@@ -628,6 +760,48 @@
   .takeaway-plain { max-width: 62ch; font-size: var(--fs-lead); color: var(--navy); font-weight: 600; line-height: 1.5; }
 
   /* ══════════════════ SECTION 8 — what we are launching ══════════════════ */
+  /* This was the plainest section on the page: a heading and a prose list on
+     navy, with nothing to rest the eye on. The image sits beside the list
+     rather than above it, so the section reads as one object. Its own darkness
+     matches the band, which is why it can sit on navy without a frame. */
+  .launch-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: clamp(28px, 4vw, 56px);
+    align-items: start;
+  }
+  .launch-figure { margin: 0; }
+  /* Portrait crop (4/5) so the photograph holds its column against the
+     ~700px feature list instead of leaving a dead zone beneath a squat
+     landscape. object-position biased left keeps the lamp and the open
+     book, which are the point of the picture. aspect-ratio + height:auto
+     also repairs the attribute-height stretch bug noted at the img rule. */
+  .launch-figure img {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    object-position: 40% 50%;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.10);
+    display: block;
+    box-shadow: 0 24px 48px rgba(0,0,0,0.35);
+  }
+  @media (max-width: 860px) {
+    /* Stacked above the list at phone widths a portrait crop towers;
+       go back to the photograph's own landscape shape. */
+    .launch-figure img { aspect-ratio: 4 / 3; }
+  }
+  .launch-figure figcaption {
+    margin-top: 12px;
+    font-size: var(--fs-caption);
+    line-height: 1.5;
+    color: rgba(200,212,224,0.72);
+    max-width: 34ch;
+  }
+  @media (max-width: 860px) {
+    .launch-grid { grid-template-columns: 1fr; }
+    .launch-figure { order: -1; }
+  }
   .launch-head { max-width: 62ch; }
   .feature-list { list-style: none; margin: clamp(28px, 3.5vw, 40px) 0 clamp(32px, 3.5vw, 48px); padding: 0; border-top: 1px solid var(--navy-hairline); }
   .feature-list li { padding: 20px 0; border-bottom: 1px solid var(--navy-hairline); font-size: var(--fs-md); color: var(--white); max-width: 84ch; line-height: 1.55; }
@@ -638,17 +812,35 @@
   .origin-quote blockquote p:last-child { font-style: normal; color: var(--teal-soft); }
 
   /* ══════════════════ SECTION 9 — is this a fit for you? ══════════════════ */
+  /* Redesigned 2026-08-13: the old pair sat on WHITE, one card mint and
+     one card white, so the "not for you" card dissolved into the band
+     and the pair read as unequal. The copy says the second list is as
+     long as the first on purpose, so the cards must weigh the same.
+     Band is now mint-deep and both cards are identical white objects:
+     same fill, same border, same shadow, same padding. The only thing
+     that differs is the accent hue of the top rule and the marks. */
   .fit-head { max-width: 62ch; }
   .fit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: clamp(28px, 3.5vw, 40px) 0 clamp(28px, 3vw, 40px); align-items: stretch; }
-  .fit-card { border-radius: 16px; padding: 28px 30px; }
-  .fit-card--yes { background: var(--mint); border: 1px solid rgba(0,97,106,0.16); }
-  .fit-card--no  { background: var(--white); border: 1px solid var(--hairline); }
+  .fit-card {
+    border-radius: 16px;
+    padding: 28px 30px;
+    background: var(--white);
+    border: 1px solid rgba(21,29,45,0.07);
+    box-shadow: 0 18px 40px -26px rgba(21,29,45,0.30);
+  }
+  /* Accent as an inset bar, not border-top: a border bends around the
+     16px corner radius and reads as a scruffy arc. Same bar on both
+     cards; only the hue differs. */
+  .fit-card::before { content: ""; display: block; width: 44px; height: 3px; border-radius: 2px; margin-bottom: 16px; }
+  .fit-card--yes::before { background: var(--teal-deep); }
+  .fit-card--no::before  { background: var(--muted); }
   .fit-card-head { font-size: var(--fs-md); font-weight: 700; color: var(--navy); margin-bottom: 18px; }
   .fit-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
   .fit-list li { display: flex; gap: 12px; align-items: flex-start; font-size: var(--fs-base); color: var(--body); line-height: 1.5; }
   .fit-mark { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; margin-top: 1px; }
   .fit-card--yes .fit-mark { background: var(--teal-deep); color: var(--white); }
-  .fit-card--no .fit-mark { background: var(--muted-soft); color: var(--white); }
+  /* was muted-soft: white on #8A97A8 is 2.97:1, failed AA. muted is 6.10:1. */
+  .fit-card--no .fit-mark { background: var(--muted); color: var(--white); }
   .fit-close { max-width: 68ch; padding-left: 22px; border-left: 3px solid var(--teal-deep); }
   .fit-close p { font-size: var(--fs-stat); font-weight: 600; color: var(--navy); line-height: 1.4; }
   @media (max-width: 760px) { .fit-grid { grid-template-columns: 1fr; } }
@@ -659,9 +851,42 @@
   .why-free-body p { font-size: var(--fs-lead); color: var(--navy); line-height: 1.5; margin: 0; }
 
   /* ══════════════════ SECTION 11 — the part that is hard to say ══════════════════ */
+  /* Redesigned 2026-08-13: was italic hairline rows, the same device as
+     three other sections, on the page's most emotional band. The rules
+     are gone. Each line hangs off a short teal dash (the typographic
+     gesture of a held breath, not a bullet), the leading is wide, and
+     the final line, which is the accumulation of all the others, steps
+     up to white and a heavier weight. Copy untouched, order untouched. */
   .confession-head { max-width: 62ch; }
-  .confession-list { list-style: none; margin: clamp(28px, 3.5vw, 40px) 0 clamp(32px, 3.5vw, 48px); padding: 0; display: grid; gap: 4px; }
-  .confession-list li { padding: 16px 0; border-top: 1px solid var(--navy-hairline); font-size: var(--fs-lead); font-style: italic; color: var(--white); max-width: 84ch; line-height: 1.5; }
+  .confession-list {
+    list-style: none;
+    margin: clamp(36px, 4.5vw, 56px) 0 clamp(36px, 4.5vw, 56px);
+    padding: 0;
+    display: grid;
+    gap: clamp(22px, 2.8vw, 32px);
+    max-width: 60ch;
+  }
+  .confession-list li {
+    position: relative;
+    padding: 0 0 0 36px;
+    border: none;
+    font-size: var(--fs-lead);
+    font-style: italic;
+    color: var(--on-dark);
+    line-height: 1.55;
+  }
+  .confession-list li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0.72em;
+    width: 18px; height: 2px;
+    border-radius: 1px;
+    background: var(--teal-soft);
+  }
+  .confession-list li:last-child {
+    color: var(--white);
+    font-weight: 600;
+  }
   .confession-close { max-width: 66ch; padding-left: 22px; border-left: 3px solid var(--teal-soft); }
   .confession-close p { font-size: var(--fs-md); font-weight: 600; color: var(--white); line-height: 1.55; font-style: normal; }
 
@@ -677,19 +902,51 @@
   .cover-head { max-width: 62ch; }
 
   /* ══════════════════ SECTION 15 — who is teaching ══════════════════ */
+  /* Redesigned 2026-08-13: three small floating circles did not carry
+     "three physicians, not three coaches", which is the page's trust
+     anchor. Now three white cards with large rounded-rectangle
+     portraits: the same tile shape as the hero call window, so the
+     people you met at the top are recognisably the same people here.
+     A short teal rule separates photograph from name, the same rule
+     vocabulary as the section closes. */
   .physicians-head { max-width: 62ch; }
-  .physician-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: clamp(32px, 4vw, 48px); }
-  .physician-card { text-align: left; }
-  .physician-avatar-frame { width: 128px; height: 128px; border-radius: 50%; overflow: hidden; box-shadow: 0 0 0 4px var(--mint), 0 0 0 7px rgba(0,97,106,0.14); margin-bottom: 20px; }
-  .physician-avatar-frame img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; }
-  .physician-name { font-size: var(--fs-md); font-weight: 700; color: var(--navy); margin-bottom: 4px; }
-  .physician-bio { font-size: var(--fs-sm); color: var(--muted); line-height: 1.55; max-width: 34ch; }
-  @media (max-width: 760px) { .physician-grid { grid-template-columns: 1fr; gap: 32px; } .physician-card { display: flex; gap: 24px; align-items: flex-start; text-align: left; } .physician-avatar-frame { margin-bottom: 0; flex-shrink: 0; } }
-  @media (max-width: 460px) { .physician-card { flex-direction: column; } .physician-avatar-frame { width: 104px; height: 104px; } }
+  .physician-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: clamp(32px, 4vw, 48px); }
+  .physician-card {
+    text-align: left;
+    background: var(--white);
+    border: 1px solid rgba(21,29,45,0.06);
+    border-radius: 16px;
+    padding: 12px 12px 26px;
+    box-shadow: 0 18px 44px -28px rgba(21,29,45,0.35);
+  }
+  .physician-photo { border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+  .physician-photo img { width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover; object-position: 50% 22%; }
+  .physician-rule { width: 26px; height: 3px; border-radius: 2px; background: var(--teal); margin: 0 10px 12px; }
+  .physician-name { font-size: var(--fs-md); font-weight: 700; color: var(--navy); margin: 0 10px 6px; }
+  .physician-bio { font-size: var(--fs-sm); color: var(--muted); line-height: 1.55; max-width: 34ch; margin: 0 10px; }
+  @media (max-width: 760px) {
+    .physician-grid { grid-template-columns: 1fr; gap: 20px; }
+    .physician-card { display: grid; grid-template-columns: 116px 1fr; column-gap: 20px; align-items: start; padding: 12px 18px 12px 12px; }
+    .physician-photo { grid-row: 1 / 4; margin-bottom: 0; }
+    .physician-rule { margin: 12px 0 10px; }
+    .physician-name { margin: 0 0 6px; }
+    .physician-bio { margin: 0 0 8px; max-width: none; }
+  }
 
   /* ══════════════════ SECTION 16 — bring a question ══════════════════ */
-  .question-box { max-width: 68ch; }
+  /* Redesigned 2026-08-13: was bare prose on white, indistinguishable
+     from the closing-note bands. Now a mint panel with a teal spine:
+     a short, authored interstitial between the physician cards and the
+     navy register band, inverting section 15 (mint band, white cards). */
+  .question-box {
+    max-width: 820px;
+    background: var(--mint);
+    border-left: 4px solid var(--teal-deep);
+    border-radius: var(--radius);
+    padding: clamp(28px, 4vw, 44px) clamp(24px, 4vw, 48px);
+  }
   .question-box .lead { color: var(--navy); font-weight: 600; margin-bottom: 16px; }
+  .question-box .lead:last-child { color: var(--body); font-weight: 400; margin-bottom: 0; }
 
   /* ══════════════════ SECTION 17 — the form ══════════════════ */
   .register-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 20px 56px; align-items: start; }
@@ -700,7 +957,7 @@
   /* Placeholder form mock. .form-embed is the wrapper meant to receive the
      real GHL <iframe> later: no fixed height, no overflow:hidden, so a
      cross-origin iframe at its own native height won't be clipped. */
-  .form-embed { background: var(--white); border-radius: 16px; padding: 26px 26px 24px; box-shadow: 0 24px 56px -20px rgba(0,0,0,0.35); }
+  .form-embed { background: var(--white); border-radius: 16px; padding: 30px 28px 28px; box-shadow: 0 24px 56px -20px rgba(0,0,0,0.35); }
   .form-embed:focus-within { box-shadow: 0 24px 56px -20px rgba(0,0,0,0.35), 0 0 0 3px var(--teal-soft); }
   .form-preview-tag {
     display: inline-flex;
@@ -714,10 +971,21 @@
     border: 1px dashed var(--muted-soft);
     border-radius: 20px;
     padding: 6px 12px;
-    margin-bottom: 18px;
+    margin-bottom: 22px;
   }
-  .ph-field { margin-bottom: 16px; }
-  .ph-field label { display: block; font-size: var(--fs-sm); font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+  /* First name / email sit side by side on a real form; the two optional
+     fields stay full width below. Stacks to one column at 480px, well
+     above the 360px floor. */
+  .ph-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+  .ph-field { margin-bottom: 18px; }
+  .ph-field label {
+    display: block;
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 7px;
+    line-height: 1.4;
+  }
   .ph-field .optional-tag { font-weight: 500; color: var(--muted); text-transform: none; letter-spacing: 0; }
   .ph-field input,
   .ph-field textarea,
@@ -728,17 +996,52 @@
     color: var(--navy);
     background: var(--mint);
     border: 1px solid var(--hairline);
-    border-radius: 8px;
-    padding: 12px 14px;
+    border-radius: var(--radius);
+    padding: 13px 14px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
   }
-  .ph-field textarea { resize: vertical; min-height: 70px; }
-  .form-embed .btn-primary { width: 100%; margin-top: 6px; }
+  .ph-field textarea { resize: vertical; min-height: 84px; font-family: var(--font); line-height: 1.5; }
+  /* Native select chrome (system arrow, flat edges) is the clearest
+     "default, not built" tell on the page. Redrawn with the same
+     currentColor line weight as the section marks so the control matches
+     the rest of the system instead of the OS. */
+  .ph-field select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2354637A' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 18px 18px;
+    padding-right: 42px;
+  }
+  /* Box-shadow ring, never outline: an outline ignores border-radius and
+     would draw a square corner over a rounded field. */
+  .ph-field input:focus-visible,
+  .ph-field textarea:focus-visible,
+  .ph-field select:focus-visible {
+    outline: none;
+    background: var(--white);
+    border-color: var(--teal-deep);
+    box-shadow: 0 0 0 3px rgba(0, 97, 106, 0.20);
+  }
+  .ph-field input:hover,
+  .ph-field textarea:hover,
+  .ph-field select:hover { border-color: var(--muted-soft); }
+  .form-embed .btn-primary { width: 100%; margin-top: 10px; }
+  @media (max-width: 480px) {
+    .ph-field-row { grid-template-columns: 1fr; gap: 0; }
+  }
 
   /* ══════════════════ SECTION 18 — what happens next ══════════════════ */
   .steps-head { max-width: 62ch; }
   .steps-list { list-style: none; margin: clamp(28px, 3.5vw, 40px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
   .step-item { border-top: 3px solid var(--teal-deep); padding-top: 16px; }
-  .step-num { display: block; font-size: var(--fs-index); font-weight: 800; color: var(--teal-deep); line-height: 1; margin-bottom: 10px; font-variant-numeric: tabular-nums; }
+  /* Icon + numeral pair, one mark per step matched to meaning (calendar
+     confirmation, reminder bell, recording). Same --teal-deep stroke set
+     as the section-3 marks, so the two lists read as one system. */
+  .step-mark { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .step-icon { flex-shrink: 0; width: 22px; height: 22px; color: var(--teal-deep); }
+  .step-num { display: block; font-size: var(--fs-index); font-weight: 800; color: var(--teal-deep); line-height: 1; font-variant-numeric: tabular-nums; }
   .step-item p { margin: 0; font-size: var(--fs-base); color: var(--navy); line-height: 1.5; max-width: 30ch; }
   @media (max-width: 700px) { .steps-list { grid-template-columns: 1fr; gap: 24px; } }
 
@@ -759,8 +1062,10 @@
   /* ══════════════════ Responsive: below 480px, general tightening ══════════════════ */
   @media (max-width: 480px) {
     .section { padding: clamp(40px, 9vw, 56px) 0; }
-    .curriculum-row { padding: 14px 0; }
-    .value-row { padding: 18px 0; }
+    .section--lg { padding: clamp(56px, 13vw, 76px) 0; }
+    /* Keep the 34px rail indent: zeroing the left padding here put the
+       timeline dots on top of the month labels at phone widths. */
+    .curriculum-row { padding: 0 0 20px 34px; }
   }
 
   /* ── Mid-page CTA ──────────────────────────────────────────────────────
@@ -911,8 +1216,13 @@
 </section>
 
 <!-- ══════════════════ SECTION 2 — this is for you ══════════════════ -->
-<section class="section-mint section" aria-labelledby="s2-heading">
+<section class="section-mint section section--lg" aria-labelledby="s2-heading">
   <div class="container">
+
+    <figure class="struggle-figure">
+      <img src="assets/s2-waiting.jpg" width="2160" height="916" loading="lazy"
+           alt="An empty armchair beside a window in a quiet room, a folded blanket over the arm and a cup left on a side table.">
+    </figure>
 
     <div class="struggle-head">
       <h2 id="s2-heading">If any of this is your life, this was made for you</h2>
@@ -981,27 +1291,45 @@
       </div>
 
       <div class="value-row">
-        <p class="value-what">A live hour every month with all three physicians</p>
+        <div class="value-what">
+          <svg class="value-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.25"/><path d="M12 7.75V12l3 2"/></svg>
+          <p>A live hour every month with all three physicians</p>
+        </div>
         <p class="value-means">Your question, answered out loud, by the doctor who covers that area. Not a forum reply. A rheumatologist thinking through it while you listen.</p>
       </div>
       <div class="value-row">
-        <p class="value-what">Written Q&amp;A with the team</p>
+        <div class="value-what">
+          <svg class="value-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6.5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-6.2L7 19v-3.5H7a2 2 0 0 1-2-2v-7Z"/></svg>
+          <p>Written Q&amp;A with the team</p>
+        </div>
         <p class="value-means">You can ask between sessions and get a clear written answer, instead of waiting four months or guessing from a search result.</p>
       </div>
       <div class="value-row">
-        <p class="value-what">New lessons every week</p>
+        <div class="value-what">
+          <svg class="value-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-1.9-1.1-4.3-1.4-6.5-1v12.5c2.2-.4 4.6-.1 6.5 1 1.9-1.1 4.3-1.4 6.5-1V5c-2.2-.4-4.6-.1-6.5 1Z"/><path d="M12 6v12.5"/></svg>
+          <p>New lessons every week</p>
+        </div>
         <p class="value-means">You are never more than a few days from something useful, and none of it is internet myth. It is written by the physicians who treat this.</p>
       </div>
       <div class="value-row">
-        <p class="value-what">A library of recorded sessions and guides</p>
+        <div class="value-what">
+          <svg class="value-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="14.75" width="16" height="3.5" rx="1"/><rect x="4" y="10" width="16" height="3.5" rx="1"/><rect x="4" y="5.25" width="16" height="3.5" rx="1"/></svg>
+          <p>A library of recorded sessions and guides</p>
+        </div>
         <p class="value-means">The 2am library. When something frightens you at midnight, there is a physician&rsquo;s version to read instead of a forum.</p>
       </div>
       <div class="value-row">
-        <p class="value-what">A private community of people with the same conditions</p>
+        <div class="value-what">
+          <svg class="value-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.7-3 2.9-5 5.5-5s4.8 2 5.5 5"/><circle cx="17.25" cy="9.5" r="2.25"/><path d="M15.5 14.2c2.1.2 3.7 1.8 4.2 4"/></svg>
+          <p>A private community of people with the same conditions</p>
+        </div>
         <p class="value-means">Nobody needs the fatigue explained. Nobody says &ldquo;but you don&rsquo;t look sick.&rdquo; You can say the hard thing and be understood immediately.</p>
       </div>
       <div class="value-row">
-        <p class="value-what">A monthly theme, not scattered tips</p>
+        <div class="value-what">
+          <svg class="value-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="3.1"/></svg>
+          <p>A monthly theme, not scattered tips</p>
+        </div>
         <p class="value-means">By the end of a year you understand your own disease properly, rather than collecting fragments you forget by the following week.</p>
       </div>
     </div>
@@ -1099,7 +1427,9 @@
       <h2 id="s8-heading">What we are launching</h2>
     </div>
 
-    <ul class="feature-list">
+    <div class="launch-grid">
+      <div>
+      <ul class="feature-list">
       <li>A monthly programme for people living with autoimmune and inflammatory disease.</li>
       <li>One live hour every month. One topic, taught properly, by whichever of the three of us covers it. Questions submitted in advance and answered out loud.</li>
       <li>New lessons every week. Movement, food, treatments, and decoding your labs.</li>
@@ -1107,7 +1437,15 @@
       <li>Written answers from our team.</li>
       <li>A private community of people living with the same conditions.</li>
       <li>Three board-certified physicians run it. Two rheumatologists and a physician trained in menopause, obesity and lifestyle medicine. Not coaches. Not a wellness programme.</li>
-    </ul>
+      </ul>
+      </div>
+
+      <figure class="launch-figure">
+        <img src="assets/s8-room.jpg" width="1400" height="1045"
+             alt="A brass desk lamp lighting an open book and a pen on a wooden desk, bookshelves in the dark behind.">
+        <figcaption>Somewhere to go at 2am, with a physician&rsquo;s version of the answer waiting.</figcaption>
+      </figure>
+    </div>
 
     <div class="origin-quote">
       <p>The why, in her own words: for five years we have treated patients through Rheumatologist OnCall. In that time the same message has arrived in my inbox every week, in one form or another.</p>
@@ -1121,7 +1459,7 @@
 </section>
 
 <!-- ══════════════════ SECTION 9 — is this a fit for you? ══════════════════ -->
-<section class="section-white section" aria-labelledby="s9-heading">
+<section class="section-mint-deep section" aria-labelledby="s9-heading">
   <div class="container">
 
     <div class="fit-head">
@@ -1165,7 +1503,7 @@
 </section>
 
 <!-- ══════════════════ SECTION 11 — the part that is hard to say out loud ══════════════════ -->
-<section class="section-navy section" aria-labelledby="s11-heading">
+<section class="section-navy section section--lg" aria-labelledby="s11-heading">
   <div class="container">
 
     <div class="confession-head">
@@ -1200,17 +1538,20 @@
 
     <div class="physician-grid">
       <div class="physician-card">
-        <div class="physician-avatar-frame"><img src="assets/dr-girnita-sq-560.jpg" alt="Dr. Diana Girnita, MD, PhD"></div>
+        <div class="physician-photo"><img src="assets/dr-girnita-sq-560.jpg" alt="Dr. Diana Girnita, MD, PhD"></div>
+        <div class="physician-rule" aria-hidden="true"></div>
         <p class="physician-name">Dr. Diana Girnita, MD, PhD</p>
         <p class="physician-bio">Double board-certified rheumatologist and physician-scientist. Founder of Rheumatologist OnCall. Labs, medications and new treatments.</p>
       </div>
       <div class="physician-card">
-        <div class="physician-avatar-frame"><img src="assets/dr-devalla-sq-560.jpg" alt="Dr. Vishnuteja Devalla, MD"></div>
+        <div class="physician-photo"><img src="assets/dr-devalla-sq-560.jpg" alt="Dr. Vishnuteja Devalla, MD"></div>
+        <div class="physician-rule" aria-hidden="true"></div>
         <p class="physician-name">Dr. Vishnuteja Devalla, MD</p>
         <p class="physician-bio">Board-certified rheumatologist. Gut health, inflammation, and the spondyloarthritis that goes unrecognised for years.</p>
       </div>
       <div class="physician-card">
-        <div class="physician-avatar-frame"><img src="assets/dr-titianu-sq-560.jpg" alt="Dr. Mirela Titianu, MD"></div>
+        <div class="physician-photo"><img src="assets/dr-titianu-sq-560.jpg" alt="Dr. Mirela Titianu, MD"></div>
+        <div class="physician-rule" aria-hidden="true"></div>
         <p class="physician-name">Dr. Mirela Titianu, MD</p>
         <p class="physician-bio">Menopause-trained, obesity board-certified, lifestyle medicine certified. Food, movement, hormones and weight.</p>
       </div>
@@ -1220,7 +1561,7 @@
 </section>
 
 <!-- ══════════════════ SECTION 16 — bring a question ══════════════════ -->
-<section class="section-white section" aria-labelledby="s16-heading">
+<section class="section-white section section--quiet" aria-labelledby="s16-heading">
   <div class="container">
     <div class="question-box">
       <p class="eyebrow">Bring a question</p>
@@ -1231,7 +1572,7 @@
 </section>
 
 <!-- ══════════════════ SECTION 17 — the form ══════════════════ -->
-<section class="section-navy section" id="register" aria-labelledby="s17-heading">
+<section class="section-navy section section--lg" id="register" aria-labelledby="s17-heading">
   <div class="container">
     <div class="register-grid">
 
@@ -1258,13 +1599,15 @@
       <div class="form-embed">
         <span class="form-preview-tag">Preview &middot; GHL form embed pending</span>
         <form action="#" onsubmit="return false;">
-          <div class="ph-field">
-            <label for="ph-first-name">First name</label>
-            <input type="text" id="ph-first-name" name="first_name" autocomplete="given-name">
-          </div>
-          <div class="ph-field">
-            <label for="ph-email">Email address</label>
-            <input type="email" id="ph-email" name="email" autocomplete="email">
+          <div class="ph-field-row">
+            <div class="ph-field">
+              <label for="ph-first-name">First name</label>
+              <input type="text" id="ph-first-name" name="first_name" autocomplete="given-name">
+            </div>
+            <div class="ph-field">
+              <label for="ph-email">Email address</label>
+              <input type="email" id="ph-email" name="email" autocomplete="email">
+            </div>
           </div>
           <div class="ph-field">
             <label for="ph-question">If you could ask a rheumatologist one thing, what would it be? <span class="optional-tag">(optional)</span></label>
@@ -1294,15 +1637,33 @@
       <h2 id="s18-heading">What happens next</h2>
     </div>
     <ol class="steps-list">
-      <li class="step-item"><span class="step-num">1</span><p>A confirmation email with a calendar link, straight away.</p></li>
-      <li class="step-item"><span class="step-num">2</span><p>Reminders three days, one day and one hour before.</p></li>
-      <li class="step-item"><span class="step-num">3</span><p>The recording, sent to everyone who registered. Whether you made it or not.</p></li>
+      <li class="step-item">
+        <span class="step-mark">
+          <svg class="step-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5.5" width="17" height="13" rx="1.5"/><path d="M4 6.5l8 6.5 8-6.5"/></svg>
+          <span class="step-num">1</span>
+        </span>
+        <p>A confirmation email with a calendar link, straight away.</p>
+      </li>
+      <li class="step-item">
+        <span class="step-mark">
+          <svg class="step-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 10a5.5 5.5 0 0 1 11 0c0 3.7 1.3 5 1.3 5H5.2S6.5 13.7 6.5 10Z"/><path d="M10.2 18.5a2 2 0 0 0 3.6 0"/></svg>
+          <span class="step-num">2</span>
+        </span>
+        <p>Reminders three days, one day and one hour before.</p>
+      </li>
+      <li class="step-item">
+        <span class="step-mark">
+          <svg class="step-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.25"/><path d="M10 8.75l5.5 3.25-5.5 3.25v-6.5Z"/></svg>
+          <span class="step-num">3</span>
+        </span>
+        <p>The recording, sent to everyone who registered. Whether you made it or not.</p>
+      </li>
     </ol>
   </div>
 </section>
 
 <!-- ══════════════════ SECTION 19 — the honest part ══════════════════ -->
-<section class="section-white section" aria-labelledby="s19-heading">
+<section class="section-white section section--quiet" aria-labelledby="s19-heading">
   <div class="container">
     <div class="honest-head">
       <h2 id="s19-heading">What this is, and what it is not</h2>
