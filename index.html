@@ -1458,9 +1458,47 @@
 
   /* ══════════════════ SECTION 19 — the honest part ══════════════════ */
   .honest-head { max-width: var(--measure-head); }
-  .honest-body { max-width: 62ch; margin-top: clamp(20px, 2.5vw, 28px); display: grid; gap: 18px; }
+  /* Arranged 2026-08-13 to match the copy's own logic, which the flat stack was
+     hiding: paragraph 1 is what this IS, paragraph 2 is what it is NOT, and
+     paragraph 3 is the resolution of the two. The first two now sit side by
+     side as a pair, and the third spans beneath them as the payoff, carrying
+     the teal lead-in the copy already gives it.
+
+     Both columns keep IDENTICAL weight and colour. Muting the "is not" column
+     to let the affirmative lead was considered and rejected: this is the
+     page's honesty section, and section 9 was already rebuilt once on exactly
+     that principle, that the negative must weigh the same as the positive.
+
+     No hairline between them and no card. The page has enough ruled devices,
+     and after the spine removal this section should hold together on space and
+     alignment alone. All CSS, no markup change, so the copy is untouched. */
+  /* Heading left, the three statements right. Setting the two paragraphs side
+     by side was tried first and measured at 33 characters per line, which is
+     far too narrow for 20px text; half of a 1080px container cannot hold this
+     size. Turning the section itself into the two-column object solves it: the
+     body keeps one 53-character column and the width is used by the heading
+     rather than by a gap.
+
+     Every other section on the page runs heading-above-content. This is the
+     last content section before the footer, so reading differently is the
+     point: it lands as a coda rather than as one more band.
+
+     Scoped by attribute rather than a new class, so no markup changes and the
+     copy diff stays clean. .container is shared by every section and must not
+     be touched globally. */
+  section[aria-labelledby="s19-heading"] .container {
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: clamp(32px, 4vw, 64px);
+    align-items: start;
+  }
+  .honest-body { display: grid; gap: clamp(18px, 2vw, 22px); }
   .honest-body p { font-size: var(--fs-lead); color: var(--navy); line-height: 1.6; margin: 0; }
   .honest-body p strong { color: var(--teal-deep); }
+  @media (max-width: 860px) {
+    section[aria-labelledby="s19-heading"] .container { grid-template-columns: 1fr; gap: 0; }
+    .honest-body { margin-top: clamp(20px, 2.5vw, 28px); }
+  }
 
   /* ══════════════════ FOOTER ══════════════════ */
   .site-footer { background: var(--navy-band); color: var(--on-dark); }
