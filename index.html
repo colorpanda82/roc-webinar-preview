@@ -594,6 +594,21 @@
   }
   .struggle-head { max-width: 62ch; margin-bottom: clamp(28px, 3vw, 40px); }
   .struggle-head .lead { margin-top: 14px; }
+  /* Desktop: the head becomes a two-column row on the same 1.15fr/1fr rhythm
+     as the foot below it. Capped at 62ch it sat as a narrow block above a
+     grid spanning the full measure, so the section looked like it started
+     small and then changed its mind about how wide it was. Heading left,
+     lead right, both landing on the same baseline. */
+  @media (min-width: 860px) {
+    .struggle-head {
+      max-width: none;
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: clamp(40px, 5vw, 64px);
+      align-items: baseline;
+    }
+    .struggle-head .lead { margin-top: 0; }
+  }
 
   /* REDESIGNED 2026-08-13 (second pass on this section). The old build was
      six near-identical number+text rows capped at 70ch: a tall left-hand
@@ -703,7 +718,10 @@
       display: grid;
       grid-template-columns: 1.15fr 1fr;
       gap: clamp(40px, 5vw, 64px);
-      align-items: center;
+      /* Top-aligned, not centred. The two columns hold very different
+         amounts of text, so centring floated the statement down against
+         the avatars and read as a misalignment rather than a choice. */
+      align-items: start;
     }
     .struggle-close { margin-bottom: 0; max-width: none; }
     .struggle-coda { display: block; }
