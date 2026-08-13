@@ -78,9 +78,33 @@
     --teal-deep: #00616A;   /* corrected from #3F8189 — see build notes above */
     --teal: #57A2A9;        /* decorative only — rules, dots, never text */
     --teal-soft: #9EC9CD;   /* eyebrows on navy ground only */
-    --mint: #EEF6F6;
-    --mint-deep: #E4EEF0;
-    --hairline: #E8F1F2;
+
+    /* COMFORT PASS 2026-08-13 — the surface ramp, re-spaced by measurement.
+       Before: white 1.000 / mint 0.907 / mint-deep 0.839 as page grounds,
+       with 34.4% of the page at navy L 0.012. The eye adapted white→near-
+       black four times down the page; the three light tones were too close
+       to read as distinct surfaces next to pure white.
+       After (WCAG relative luminance, computed not estimated):
+         --paper     #F5F9FA  L 0.941  base page ground (white retired as a band)
+         --mint      #E8F2F2  L 0.871  panel band
+         --mint-deep #DCE9EB  L 0.795  alternate band
+         --navy-band #1E2739  L 0.020  dark band surface, lifted off #151D2D (0.012)
+                              and warmed one step so it reads navy, not black
+       Pure #FFFFFF now appears ONLY on cards that sit on a tinted or dark
+       ground and need to lift off it (form card, fit cards, physician
+       cards, the struggle break-out). Paper on a desk, not the desk.
+       --navy stays as TEXT colour everywhere; the deep tone also stays on
+       the two small punctuation objects (.call-window, .agenda-honesty),
+       which sit on light grounds as cards, not as bands. */
+    --paper: #F5F9FA;
+    --mint: #E8F2F2;
+    --mint-deep: #DCE9EB;
+    --navy-band: #1E2739;
+    /* Hairline is now an alpha tint, not a fixed mint: it has to stay
+       visible on paper (0.941), mint (0.871) AND mint-deep (0.795); the
+       old #E8F1F2 (L 0.865) was already invisible on mint-deep and would
+       vanish entirely against the new ramp. */
+    --hairline: rgba(21, 29, 45, 0.10);
     --on-dark: #C8D4E0;
     --white: #FFFFFF;
     --navy-hairline: rgba(200, 212, 224, 0.16);
@@ -111,8 +135,10 @@
     margin: 0;
     font-family: var(--font);
     color: var(--body);
-    background: var(--white);
-    line-height: 1.6;
+    background: var(--paper);
+    /* 1.6 was defensible but tight for a page this long; long-passage
+       components used to override DOWN to 1.55, now none go below 1.6. */
+    line-height: 1.7;
     -webkit-font-smoothing: antialiased;
   }
   /* height:auto matters: without it an <img> with width/height attributes
@@ -159,11 +185,11 @@
      (9.39:1 vs navy): both measured. Form fields keep their own ring. */
   :focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px var(--white), 0 0 0 6px var(--teal-deep);
+    box-shadow: 0 0 0 3px var(--paper), 0 0 0 6px var(--teal-deep);
   }
   .section-navy :focus-visible,
   .site-footer :focus-visible {
-    box-shadow: 0 0 0 3px var(--navy), 0 0 0 6px var(--teal-soft);
+    box-shadow: 0 0 0 3px var(--navy-band), 0 0 0 6px var(--teal-soft);
   }
 
   .eyebrow {
@@ -194,11 +220,14 @@
      less. Everything else keeps the standard beat. */
   .section--lg    { padding: var(--section-pad-lg) 0; }
   .section--quiet { padding: var(--section-pad-sm) 0; }
-  .section-white     { background: var(--white); }
+  /* .section-white kept as a class name for diff stability, but it now
+     maps to paper: pure white is retired as a page-band surface (comfort
+     pass, see :root notes). */
+  .section-white     { background: var(--paper); }
   .section-mint      { background: var(--mint); }
   .section-mint-deep { background: var(--mint-deep); }
   .section-navy {
-    background: var(--navy);
+    background: var(--navy-band);
     color: var(--on-dark);
   }
   .section-navy h2 { color: var(--white); }
@@ -237,7 +266,7 @@
     position: sticky;
     top: 0;
     z-index: 40;
-    background: rgba(255,255,255,0.94);
+    background: rgba(245,249,250,0.94); /* paper, not white, so the sticky bar matches the ground it scrolls over */
     backdrop-filter: blur(6px);
     padding: 14px 0;
     border-bottom: 1px solid var(--hairline);
@@ -554,7 +583,10 @@
   .struggle-list { list-style: none; margin: 0 0 clamp(36px, 4vw, 52px); padding: 0; border-top: 1px solid rgba(21,29,45,0.12); }
   .struggle-item { display: grid; grid-template-columns: auto 1fr; gap: 22px; align-items: baseline; padding: 22px 0; border-bottom: 1px solid rgba(21,29,45,0.12); }
   .struggle-index { font-size: var(--fs-index); font-weight: 800; line-height: 0.85; letter-spacing: -0.02em; color: var(--teal-deep); font-variant-numeric: tabular-nums; }
-  .struggle-text { margin: 0; font-size: var(--fs-base); color: var(--body); max-width: 84ch; }
+  /* 84ch was past the comfortable ceiling for running text; 70ch keeps
+     the return sweep short enough not to lose the line. Same fix on the
+     agenda and feature list below. */
+  .struggle-text { margin: 0; font-size: var(--fs-base); color: var(--body); max-width: 70ch; }
   .struggle-text strong { color: var(--navy); font-weight: 700; }
 
   /* Item six now carries its own number (06) into the break-out card —
@@ -574,7 +606,7 @@
   .struggle-item--break .struggle-text { font-size: var(--fs-stat); font-weight: 600; color: var(--navy); max-width: 48ch; line-height: 1.4; }
 
   .struggle-close { max-width: 68ch; padding-left: 22px; border-left: 3px solid var(--teal-deep); margin-bottom: clamp(40px, 4.5vw, 60px); }
-  .struggle-close p { font-size: var(--fs-stat); font-weight: 600; color: var(--navy); line-height: 1.4; margin: 0; }
+  .struggle-close p { font-size: var(--fs-stat); font-weight: 600; color: var(--navy); line-height: 1.45; margin: 0; }
 
   .struggle-coda { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
   .coda-avatars { display: flex; flex-shrink: 0; }
@@ -639,7 +671,7 @@
     padding: 26px 28px;
     font-size: var(--fs-md);
     color: var(--body);
-    line-height: 1.6;
+    line-height: 1.65;
   }
   .value-means strong { color: var(--teal-deep); }
   /* Hairlines inside the fused column, teal-tinted so the column reads as
@@ -670,8 +702,16 @@
      grid-auto-flow:column with 6 fixed rows puts months 1-6 down the
      left rail and 7-12 down the right, deterministically. The rail and
      dot vocabulary deliberately echo the agenda timeline (the page's best
-     section), in its navy variant, so the two read as one system:
-     the year is a longer version of the hour. */
+     section), so the two read as one system: the year is a longer
+     version of the hour.
+     COMFORT PASS 2026-08-13: this band moved from navy to mint, taking
+     the page from four dark bands to three. It was the first and tallest
+     dark plunge, arriving barely two screens in; on mint the curriculum
+     now shares the agenda's own light timeline vocabulary (teal-deep
+     labels, body titles), which strengthens the year-echoes-the-hour
+     rhyme rather than weakening it. The remaining navy bands are the
+     launch, the confession and the register: the three moments that
+     earn punctuation. */
   .curriculum-head { max-width: 64ch; }
   .curriculum-head .lead { margin-top: 14px; max-width: 62ch; }
   .curriculum-grid {
@@ -695,7 +735,7 @@
     position: absolute;
     left: 5px; top: 16px; bottom: 0;
     width: 1px;
-    background: var(--navy-hairline);
+    background: rgba(21,29,45,0.14);
   }
   .curriculum-row:nth-child(6)::before,
   .curriculum-row:nth-child(12)::before { display: none; }
@@ -706,13 +746,13 @@
     width: 11px; height: 11px;
     box-sizing: border-box;
     border-radius: 50%;
-    background: var(--navy);
-    border: 2px solid var(--teal-soft);
+    background: var(--mint);
+    border: 2px solid var(--teal-deep);
   }
-  .curriculum-month { display: block; font-size: var(--fs-eyebrow); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--teal-soft); white-space: nowrap; margin-bottom: 5px; }
-  .curriculum-title { margin: 0; font-size: var(--fs-base); font-weight: 500; color: var(--white); line-height: 1.45; max-width: 44ch; }
-  .curriculum-close { max-width: 66ch; padding-left: 22px; border-left: 3px solid var(--teal-soft); }
-  .curriculum-close p { font-size: var(--fs-md); font-weight: 600; color: var(--white); line-height: 1.5; }
+  .curriculum-month { display: block; font-size: var(--fs-eyebrow); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--teal-deep); white-space: nowrap; margin-bottom: 5px; }
+  .curriculum-title { margin: 0; font-size: var(--fs-base); font-weight: 500; color: var(--navy); line-height: 1.5; max-width: 44ch; }
+  .curriculum-close { max-width: 66ch; padding-left: 22px; border-left: 3px solid var(--teal-deep); }
+  .curriculum-close p { font-size: var(--fs-md); font-weight: 600; color: var(--navy); line-height: 1.55; }
   @media (max-width: 760px) {
     /* One continuous rail, month 1 to 12; only month 12 ends it. */
     .curriculum-grid { grid-auto-flow: row; grid-template-rows: none; grid-template-columns: 1fr; }
@@ -734,9 +774,9 @@
   .agenda-timeline::before { content: ""; position: absolute; left: 5px; top: 8px; bottom: 8px; width: 1px; background: var(--hairline); }
   .agenda-item { position: relative; padding: 0 0 clamp(26px, 3vw, 36px) 34px; }
   .agenda-item:last-child { padding-bottom: 0; }
-  .agenda-item::before { content: ""; position: absolute; left: 0; top: 5px; width: 11px; height: 11px; border-radius: 50%; background: var(--white); border: 2px solid var(--teal-deep); }
+  .agenda-item::before { content: ""; position: absolute; left: 0; top: 5px; width: 11px; height: 11px; border-radius: 50%; background: var(--paper); border: 2px solid var(--teal-deep); }
   .agenda-range { display: block; font-size: var(--fs-eyebrow); font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--teal-deep); margin-bottom: 6px; }
-  .agenda-text { margin: 0; font-size: var(--fs-md); color: var(--body); max-width: 80ch; line-height: 1.55; }
+  .agenda-text { margin: 0; font-size: var(--fs-md); color: var(--body); max-width: 70ch; line-height: 1.65; }
 
   /* The "do not cut" line — given real visual weight, not buried as fine
      print (explicit build instruction). */
@@ -804,7 +844,7 @@
   }
   .launch-head { max-width: 62ch; }
   .feature-list { list-style: none; margin: clamp(28px, 3.5vw, 40px) 0 clamp(32px, 3.5vw, 48px); padding: 0; border-top: 1px solid var(--navy-hairline); }
-  .feature-list li { padding: 20px 0; border-bottom: 1px solid var(--navy-hairline); font-size: var(--fs-md); color: var(--white); max-width: 84ch; line-height: 1.55; }
+  .feature-list li { padding: 20px 0; border-bottom: 1px solid var(--navy-hairline); font-size: var(--fs-md); color: var(--white); max-width: 70ch; line-height: 1.65; }
   .origin-quote { max-width: 66ch; }
   .origin-quote p:first-child { font-size: var(--fs-md); color: var(--on-dark); line-height: 1.6; margin-bottom: 18px; }
   .origin-quote blockquote { margin: 0; padding-left: 22px; border-left: 3px solid var(--teal-soft); }
@@ -873,7 +913,7 @@
     font-size: var(--fs-lead);
     font-style: italic;
     color: var(--on-dark);
-    line-height: 1.55;
+    line-height: 1.6;
   }
   .confession-list li::before {
     content: "";
@@ -1048,11 +1088,11 @@
   /* ══════════════════ SECTION 19 — the honest part ══════════════════ */
   .honest-head { max-width: 62ch; }
   .honest-body { max-width: 62ch; margin-top: clamp(20px, 2.5vw, 28px); display: grid; gap: 18px; }
-  .honest-body p { font-size: var(--fs-lead); color: var(--navy); line-height: 1.55; margin: 0; }
+  .honest-body p { font-size: var(--fs-lead); color: var(--navy); line-height: 1.6; margin: 0; }
   .honest-body p strong { color: var(--teal-deep); }
 
   /* ══════════════════ FOOTER ══════════════════ */
-  .site-footer { background: var(--navy); color: var(--on-dark); }
+  .site-footer { background: var(--navy-band); color: var(--on-dark); }
   .footer-disclaimer { border-top: 1px solid var(--navy-hairline); padding: clamp(28px, 4vw, 44px) 0; }
   .footer-disclaimer p { font-size: var(--fs-sm); color: var(--on-dark); line-height: 1.6; max-width: 76ch; margin: 0; }
   .footer-disclaimer strong { color: var(--white); }
@@ -1338,7 +1378,7 @@
 </section>
 
 <!-- ══════════════════ SECTION 4 — a full year, already planned ══════════════════ -->
-<section class="section-navy section" aria-labelledby="s4-heading">
+<section class="section-mint section" aria-labelledby="s4-heading">
   <div class="container">
 
     <div class="curriculum-head">
