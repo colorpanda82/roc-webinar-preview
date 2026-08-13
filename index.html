@@ -111,6 +111,19 @@
 
     --font: "Inter", -apple-system, "Segoe UI", sans-serif;
     --radius: 10px;
+    /* Chips and small controls. Cards, images and panels all take
+       --radius; the hero call window keeps its own scale because it is a
+       replica of a real video-call UI, not a page component. */
+    --radius-sm: 6px;
+
+    /* Line measures, in px on purpose. These were `ch` on wrapper divs,
+       where `ch` resolved against the wrapper's inherited 16px rather
+       than the 36px heading inside it, cropping headings to 22
+       characters on a 1080px container. px removes that trap: the cap
+       means the same thing wherever it is applied. */
+    --measure-head: 780px;      /* head wrapper, so it caps the lead too */
+    --measure-display: 700px;   /* the h2 itself */
+    --measure-emphasis: 760px;  /* the 26px bold closing statements */
     --container: 1080px;
     --section-pad: clamp(48px, 6vw, 80px);
     --section-pad-lg: clamp(68px, 8.5vw, 118px);
@@ -126,10 +139,30 @@
     --fs-sm:      0.9375rem;
     --fs-caption: 0.8125rem;
     --fs-eyebrow: 0.75rem;
+
+    /* WEIGHT SCALE, audited across all 190 text-bearing elements 2026-08-13.
+       400 body · 500 medium · 600 emphasis · 700 headings, eyebrows, labels.
+
+       500 is a real step, not drift, and is used deliberately in exactly two
+       places: .curriculum-title, where the month topic is the card's entire
+       content and has to sit above body copy without shouting, and
+       .optional-tag. Cristian's call to keep it. Recorded here because an
+       undocumented single-use weight is what a later pass "corrects" by
+       mistake.
+
+       Nothing on this page should be 900. <strong> is pinned to 700 near the
+       top of this stylesheet for that reason: the UA default is a RELATIVE
+       `bolder`, which lands on 900 inside any 600 parent. */
     --fs-micro:   0.6875rem;
   }
 
-  * { box-sizing: border-box; }
+  /* Pseudo-elements included deliberately: `*` alone does NOT match ::before
+     or ::after, which is how the agenda timeline's dots ended up 2px right of
+     their rail. They were the only bordered pseudo-element on the page, so
+     they silently kept content-box and measured 15px wide against a declared
+     11px. Audited before changing this, with explore/audit-pseudo.cjs: that
+     dot is the only pseudo-element on the page whose size this affects. */
+  *, *::before, *::after { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
     margin: 0;
@@ -161,7 +194,18 @@
   h3 { font-size: var(--fs-md); font-weight: 700; }
   p { margin: 0 0 1rem; }
   p:last-child { margin-bottom: 0; }
+  /* The UA stylesheet gives <strong> `bolder`, which is RELATIVE to the
+     parent: inside a 400 parent it lands on 700, inside a 600 parent it lands
+     on 900. That is why the hero caption's [DATE] was rendering at 900, the
+     only 900 on the page, authored by nobody. Pinned to 700 so <strong> means
+     one thing everywhere. Components that want a different weight still set it
+     themselves and still win on specificity (.recognitions strong is 600). */
+  strong { font-weight: 700; }
+
   .lead { font-size: var(--fs-lead); color: var(--body); max-width: 56ch; }
+  /* Set on the heading, not its wrapper, so the measure is governed by the
+     heading's own size. h1 is excluded: the hero sets its own column. */
+  .section h2 { max-width: var(--measure-display); }
 
   /* Skip link — visible on focus only */
   .skip-link {
@@ -170,7 +214,7 @@
     background: var(--navy);
     color: var(--white);
     padding: 12px 18px;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     font-weight: 600;
     font-size: var(--fs-sm);
     z-index: 100;
@@ -561,10 +605,27 @@
   /* ══════════════════ SECTION 2 — this is for you ══════════════════ */
   /* Rebuilt 2026-08-13 from the approved comp C. The photograph stops being a
      band above the text and becomes a column standing beside the five
-     recognitions, then returns under 06 as the room the sentence sits in.
+     recognitions, then 06 arrives on a photograph of its own.
      Earlier builds of this section are kept in explore/: a left-hand strip of
      numbered rows, then a weighted card grid. In both the picture was
-     decoration, which is why they were replaced. */
+     decoration, which is why they were replaced.
+
+     TWO DIFFERENT ROOMS, deliberately. Until 2026-08-13 evening this column
+     held s2-waiting-portrait.jpg, a second generation of the same armchair
+     scene that runs under 06, on the theory that returning to the room was a
+     device. It was not: the two generations disagreed on chair, blanket and
+     window, so they read as the same photograph with a continuity error rather
+     than as a return. On mobile the crescendo switches to image-on-top, which
+     stacked the two directly against each other and made it plainer still.
+     The column is now a kitchen, the 06 band keeps the armchair, and both are
+     empty seats in one house. s2-waiting-portrait.jpg is retained unused in
+     img/ and img/masters/ if that call is ever reversed. */
+  /* 14px matches .curriculum-head .lead and .register-copy .lead. This was
+     the only head lead on the page sitting at 0px under its heading
+     (measured: explore/audit-gaps.cjs companion check, s2 0 / s4 14 / s17 14),
+     and at h2 size the descender space alone is not enough air. */
+  .struggle-head .lead { margin-top: 14px; }
+
   .spread {
     display: grid;
     grid-template-columns: 0.92fr 1.08fr;
@@ -580,12 +641,22 @@
     /* Purpose-shot 4:5 portrait. Cropping the 21:9 landscape into this column
        gave a fragment of chair against a door frame: a landscape source cannot
        fill a tall frame. flex plus min-height:0 lets it absorb the column's
-       spare height; the floor stops a short list squashing it to a letterbox. */
+       spare height; the floor stops a short list squashing it to a letterbox.
+
+       The column renders 434x679 at 1440 (aspect 0.639) against a 0.806
+       source, so cover crops HORIZONTALLY and the Y half of object-position is
+       inert at desktop. Measured, not assumed: explore/shoot-s2-variants.cjs
+       prints the rendered box. X at 42% keeps the window and table at the left
+       and lands the empty chair with air to its right. */
     flex: 1 1 auto;
     min-height: 340px;
     object-fit: cover;
     object-position: 42% 55%;
-    border-radius: 4px;
+    /* var(--radius), not the 4px this shipped with. Photograph corners on this
+       page now follow one rule: var(--radius) on a light band, 14px where the
+       picture is framed on navy with a hairline and a shadow (s8, s11). Section
+       2 was the only 4px on the page and read as a different component. */
+    border-radius: var(--radius);
   }
   .spread-figure figcaption {
     flex: none;
@@ -594,8 +665,6 @@
     line-height: 1.5;
     color: var(--muted);
     max-width: 30ch;
-    padding-left: 14px;
-    border-left: 2px solid var(--teal);
   }
 
   .recognitions { list-style: none; margin: 0; padding: 0; }
@@ -626,7 +695,7 @@
   .crescendo {
     position: relative;
     margin-top: clamp(40px, 5vw, 64px);
-    border-radius: 4px;
+    border-radius: var(--radius);
     overflow: hidden;
     background-image:
       linear-gradient(to right,
@@ -651,7 +720,12 @@
   }
   .crescendo p {
     margin: 0;
-    font-size: clamp(1.25rem, 1.1vw + 1rem, 1.75rem);
+    /* --fs-stat, the shared emphasis size, not its own clamp. This topped out
+       at 28px against 26px for every other closing statement, and 2px is not a
+       hierarchy step, it is drift. 06 still reads as the section's climax
+       through its layout: it is the only one of them set on a photograph, in
+       its own full-bleed card. Same 20px floor, so mobile is unchanged. */
+    font-size: var(--fs-stat);
     font-weight: 600;
     line-height: 1.42;
     color: var(--navy);
@@ -668,7 +742,7 @@
        text and centring read as a misalignment. */
     align-items: start;
   }
-  .struggle-close { padding-left: 22px; border-left: 3px solid var(--teal-deep); }
+  .struggle-close { }
   .struggle-close p {
     margin: 0;
     font-size: var(--fs-stat);
@@ -721,7 +795,32 @@
      right-hand column is the reason anyone joins" (source note) is now
      literally one weighted column, and each row's pair stays height-
      locked because both cells share a grid row. */
-  .table-head { margin-bottom: clamp(28px, 3vw, 40px); max-width: 62ch; }
+  .table-head { margin-bottom: clamp(28px, 3vw, 40px); max-width: var(--measure-head); }
+
+  /* Clinic band, moved here from section 15 on Cristian's call 2026-08-13
+     evening. It sits between the heading and the value table: above the table
+     because the table is a two-column reading device that a photograph should
+     not interrupt, and below the heading so the section still opens on words.
+
+     Wide and shallow was chosen to read as a room rather than a portrait, and
+     it does not: 21:9 already takes the FULL width of the 4000x2672 source, so
+     the framing is the photographer's and it stays tight on the two figures.
+     Recorded rather than quietly dropped, because the next person to widen
+     this crop needs to know there is nothing left to widen into. A genuinely
+     environmental frame would have to come from a different shot. */
+  .clinic-figure { margin: 0 0 clamp(32px, 4vw, 48px); }
+  .clinic-figure img {
+    width: 100%;
+    aspect-ratio: 21 / 9;
+    object-fit: cover;
+    object-position: 50% 42%;
+    border-radius: var(--radius);
+    display: block;
+  }
+  @media (max-width: 860px) {
+    /* A 21:9 band at 390px is 167px tall and loses both faces. */
+    .clinic-figure img { aspect-ratio: 4 / 3; }
+  }
   .value-table {
     display: grid;
     grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
@@ -802,7 +901,7 @@
      Contrast (computed, WCAG relative luminance): chip text #00616A on
      its 8% tint over white 6.35:1; card title #151D2D on #FFFFFF
      16.86:1. */
-  .curriculum-head { max-width: 64ch; }
+  .curriculum-head { max-width: var(--measure-head); }
   .curriculum-head .lead { margin-top: 14px; max-width: 62ch; }
   .curriculum-grid {
     list-style: none;
@@ -827,14 +926,14 @@
     letter-spacing: 0.06em;
     color: var(--teal-deep);
     background: rgba(0,97,106,0.08);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     padding: 3px 10px;
     margin-bottom: 12px;
     white-space: nowrap;
   }
   .curriculum-title { margin: 0; font-size: var(--fs-base); font-weight: 500; color: var(--navy); line-height: 1.5; }
-  .curriculum-close { max-width: 66ch; padding-left: 22px; border-left: 3px solid var(--teal-deep); }
-  .curriculum-close p { font-size: var(--fs-md); font-weight: 600; color: var(--navy); line-height: 1.55; }
+  .curriculum-close { max-width: var(--measure-emphasis); }
+  .curriculum-close p { font-size: var(--fs-stat); font-weight: 600; color: var(--navy); line-height: 1.4; }
   @media (max-width: 900px) {
     .curriculum-grid { grid-template-columns: repeat(2, 1fr); }
   }
@@ -844,39 +943,58 @@
   }
 
   /* ══════════════════ SECTION 5 — what real help looks like ══════════════════ */
-  .scenario-head { max-width: 60ch; }
+  .scenario-head { max-width: var(--measure-head); }
   .scenario-list { list-style: none; margin: clamp(28px, 3.5vw, 40px) 0 clamp(32px, 3.5vw, 48px); padding: 0; display: grid; gap: 0; }
   .scenario-item { display: flex; gap: 18px; padding: 20px 0; border-top: 1px solid var(--hairline); align-items: flex-start; }
   .scenario-item::before { content: ""; flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: var(--teal); margin-top: 9px; }
   .scenario-text { margin: 0; font-size: var(--fs-md); color: var(--navy); max-width: 84ch; line-height: 1.55; }
-  .scenario-close { max-width: 68ch; padding-left: 22px; border-left: 3px solid var(--teal-deep); }
+  .scenario-close { max-width: var(--measure-emphasis); }
   .scenario-close p { font-size: var(--fs-stat); font-weight: 600; color: var(--navy); line-height: 1.4; }
 
   /* ══════════════════ SECTION 6 — the agenda ══════════════════ */
-  .agenda-head { max-width: 62ch; }
+  .agenda-head { max-width: var(--measure-head); }
   .agenda-timeline { list-style: none; margin: clamp(28px, 3.5vw, 40px) 0 0; padding: 0; position: relative; }
-  .agenda-timeline::before { content: ""; position: absolute; left: 5px; top: 8px; bottom: 8px; width: 1px; background: var(--hairline); }
+  /* Rail and dots share a centre at x = 7.5px, and the two numbers below are
+     the only place that is set: dot spans 0 to 15, rail spans 7 to 8.
+     The dot is now 15px because that is the size it was ALREADY rendering at,
+     11px of content plus two 2px borders under the content-box it was getting.
+     Declaring 15 under border-box keeps the circle exactly the size it has
+     always looked, and makes the number on the screen match the number in the
+     file. Verified by measuring both boxes in the browser, not by arithmetic:
+     explore/debug-timeline.cjs prints each centre and the offset between. */
+  .agenda-timeline::before { content: ""; position: absolute; left: 7px; top: 8px; bottom: 8px; width: 1px; background: var(--hairline); }
   .agenda-item { position: relative; padding: 0 0 clamp(26px, 3vw, 36px) 34px; }
   .agenda-item:last-child { padding-bottom: 0; }
-  .agenda-item::before { content: ""; position: absolute; left: 0; top: 5px; width: 11px; height: 11px; border-radius: 50%; background: var(--paper); border: 2px solid var(--teal-deep); }
+  .agenda-item::before { content: ""; position: absolute; left: 0; top: 5px; width: 15px; height: 15px; border-radius: 50%; background: var(--paper); border: 2px solid var(--teal-deep); }
   .agenda-range { display: block; font-size: var(--fs-eyebrow); font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--teal-deep); margin-bottom: 6px; }
-  .agenda-text { margin: 0; font-size: var(--fs-md); color: var(--body); max-width: 70ch; line-height: 1.65; }
+  .agenda-text { margin: 0; font-size: var(--fs-md); color: var(--body); max-width: 62ch; line-height: 1.65; }
 
   /* The "do not cut" line — given real visual weight, not buried as fine
      print (explicit build instruction). */
   .agenda-honesty {
     margin-top: clamp(28px, 3.5vw, 40px);
     background: var(--navy);
-    border-radius: 14px;
+    border-radius: var(--radius);
     padding: 28px 30px;
     max-width: 72ch;
   }
   .agenda-honesty p { margin: 0; font-size: var(--fs-md); font-weight: 600; color: var(--white); line-height: 1.6; }
-  .agenda-honesty .eyebrow { color: var(--teal-soft); }
+  /* Size and weight restated, not just colour. `.agenda-honesty p` sets 17px
+     600 and outranks `.eyebrow` (two classes to one), so this eyebrow was
+     rendering at 17px while every other eyebrow on the page is 12px 700: a
+     component class silently losing to its container, the same shape of bug as
+     the blockquote in section 8. Found by auditing all 190 text elements
+     rather than one sample per section. */
+  .agenda-honesty .eyebrow {
+    color: var(--teal-soft);
+    font-size: var(--fs-eyebrow);
+    font-weight: 700;
+    line-height: 1.7;
+  }
   .agenda-honesty .eyebrow::before { background: var(--teal-soft); }
 
   /* ══════════════════ SECTION 7 — what you leave with ══════════════════ */
-  .takeaway-head { max-width: 62ch; }
+  .takeaway-head { max-width: var(--measure-head); }
   .dot-list { list-style: none; margin: clamp(28px, 3.5vw, 40px) 0 clamp(28px, 3vw, 40px); padding: 0; display: grid; gap: 0; }
   .dot-list li { display: flex; gap: 16px; padding: 18px 0; border-top: 1px solid var(--hairline); align-items: flex-start; }
   .dot-list li::before { content: ""; flex-shrink: 0; width: 7px; height: 7px; border-radius: 50%; background: var(--teal-deep); margin-top: 9px; }
@@ -893,6 +1011,15 @@
     grid-template-columns: 1.15fr 0.85fr;
     gap: clamp(28px, 4vw, 56px);
     align-items: start;
+    /* The head->content beat lives on the GRID, not on the list inside its
+       left column. It used to live on .feature-list's top margin, which left
+       the photograph column at 0px below the heading: flush against it at
+       desktop, and on mobile (figure ordered first) the photo touched the
+       heading while the list trailed 56px below the caption. Measured with
+       explore/audit-gaps.cjs: every other section runs 28-56px here, s8 ran 0.
+       Same clamp as s3/s6/s9/s18, so desktop list position is unchanged and
+       the photo top now aligns with the list's first hairline. */
+    margin-top: clamp(28px, 3.5vw, 40px);
   }
   .launch-figure { margin: 0; }
   /* Portrait crop (4/5) so the photograph holds its column against the
@@ -905,7 +1032,7 @@
     aspect-ratio: 3 / 4;
     object-fit: cover;
     object-position: 40% 50%;
-    border-radius: 14px;
+    border-radius: var(--radius);
     border: 1px solid rgba(255,255,255,0.10);
     display: block;
     box-shadow: 0 24px 48px rgba(0,0,0,0.35);
@@ -926,12 +1053,22 @@
     .launch-grid { grid-template-columns: 1fr; }
     .launch-figure { order: -1; }
   }
-  .launch-head { max-width: 62ch; }
-  .feature-list { list-style: none; margin: clamp(28px, 3.5vw, 40px) 0 clamp(32px, 3.5vw, 48px); padding: 0; border-top: 1px solid var(--navy-hairline); }
+  .launch-head { max-width: var(--measure-head); }
+  /* Top margin 0: the head->content gap moved up onto .launch-grid (see
+     above), so keeping it here too would double-space the list against the
+     photo column. Bottom margin unchanged. */
+  .feature-list { list-style: none; margin: 0 0 clamp(32px, 3.5vw, 48px); padding: 0; border-top: 1px solid var(--navy-hairline); }
   .feature-list li { padding: 20px 0; border-bottom: 1px solid var(--navy-hairline); font-size: var(--fs-md); color: var(--white); max-width: 70ch; line-height: 1.65; }
-  .origin-quote { max-width: 66ch; }
-  .origin-quote p:first-child { font-size: var(--fs-md); color: var(--on-dark); line-height: 1.6; margin-bottom: 18px; }
-  .origin-quote blockquote { margin: 0; padding-left: 22px; border-left: 3px solid var(--teal-soft); }
+  .origin-quote { max-width: var(--measure-emphasis); }
+  /* DIRECT child, deliberately. As `.origin-quote p:first-child` this also
+     matched the first <p> INSIDE the blockquote, and beat
+     `.origin-quote blockquote p` on specificity (two classes against one), so
+     Diana's actual quoted sentence had been rendering at 17px in body grey
+     instead of 26px in white. Found 2026-08-13 by measuring the rendered type
+     rather than reading the rule, which is the only way this class of bug
+     shows up: the CSS reads correctly. */
+  .origin-quote > p:first-child { font-size: var(--fs-md); color: var(--on-dark); line-height: 1.6; margin-bottom: 18px; }
+  .origin-quote blockquote { margin: 0; }
   .origin-quote blockquote p { font-size: var(--fs-stat); font-weight: 600; color: var(--white); font-style: italic; line-height: 1.45; }
   .origin-quote blockquote p:last-child { font-style: normal; color: var(--teal-soft); }
 
@@ -943,10 +1080,27 @@
      Band is now mint-deep and both cards are identical white objects:
      same fill, same border, same shadow, same padding. The only thing
      that differs is the accent hue of the top rule and the marks. */
-  .fit-head { max-width: 62ch; }
+  .fit-head { max-width: var(--measure-head); }
+  /* Photograph added 2026-08-13 evening, ABOVE the pair and never beside it.
+     The copy makes the "not for you" list as long as the "for you" list on
+     purpose and the redesign above exists to keep the two cards weighing the
+     same; a picture in or next to either card destroys that in one move. A
+     full-width band over both pushes them down equally and stays neutral.
+     16:9 rather than s15's 21:9 so the two wide bands, sixteen percent of the
+     page apart, are not the same letterbox twice. */
+  .fit-figure { margin: clamp(28px, 3.5vw, 40px) 0 0; }
+  .fit-figure img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: 50% 45%;
+    border-radius: var(--radius);
+    display: block;
+  }
+  @media (max-width: 760px) { .fit-figure img { aspect-ratio: 4 / 3; } }
   .fit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: clamp(28px, 3.5vw, 40px) 0 clamp(28px, 3vw, 40px); align-items: stretch; }
   .fit-card {
-    border-radius: 16px;
+    border-radius: var(--radius);
     padding: 28px 30px;
     background: var(--white);
     border: 1px solid rgba(21,29,45,0.07);
@@ -965,12 +1119,12 @@
   .fit-card--yes .fit-mark { background: var(--teal-deep); color: var(--white); }
   /* was muted-soft: white on #8A97A8 is 2.97:1, failed AA. muted is 6.10:1. */
   .fit-card--no .fit-mark { background: var(--muted); color: var(--white); }
-  .fit-close { max-width: 68ch; padding-left: 22px; border-left: 3px solid var(--teal-deep); }
+  .fit-close { max-width: var(--measure-emphasis); }
   .fit-close p { font-size: var(--fs-stat); font-weight: 600; color: var(--navy); line-height: 1.4; }
   @media (max-width: 760px) { .fit-grid { grid-template-columns: 1fr; } }
 
   /* ══════════════════ SECTION 10 — why is this free ══════════════════ */
-  .why-free-head { max-width: 60ch; }
+  .why-free-head { max-width: var(--measure-head); }
   .why-free-body { max-width: 62ch; margin-top: clamp(20px, 2.5vw, 28px); display: grid; gap: 18px; }
   .why-free-body p { font-size: var(--fs-lead); color: var(--navy); line-height: 1.5; margin: 0; }
 
@@ -981,7 +1135,7 @@
      gesture of a held breath, not a bullet), the leading is wide, and
      the final line, which is the accumulation of all the others, steps
      up to white and a heavier weight. Copy untouched, order untouched. */
-  .confession-head { max-width: 62ch; }
+  .confession-head { max-width: var(--measure-head); }
   .confession-list {
     list-style: none;
     margin: clamp(36px, 4.5vw, 56px) 0 clamp(36px, 4.5vw, 56px);
@@ -1011,19 +1165,64 @@
     color: var(--white);
     font-weight: 600;
   }
-  .confession-close { max-width: 66ch; padding-left: 22px; border-left: 3px solid var(--teal-soft); }
-  .confession-close p { font-size: var(--fs-md); font-weight: 600; color: var(--white); line-height: 1.55; font-style: normal; }
+  .confession-close { max-width: var(--measure-emphasis); }
+  .confession-close p { font-size: var(--fs-stat); font-weight: 600; color: var(--white); line-height: 1.4; font-style: normal; }
+
+  /* Photograph added 2026-08-13 evening, with s15 and s16, against a measured
+     gap: every photograph on the page sat between 0% and 51% of scroll height,
+     so the whole back half ran on type alone. Mapped with
+     explore/map-images.cjs rather than estimated.
+
+     The list keeps its 60ch measure and its position; the picture takes the
+     column that was empty air beside it. Framed the way .launch-figure is
+     framed, because both sit on navy: radius, a 10% white hairline and a deep
+     shadow, which is what stops a bright photograph reading as a hole punched
+     in the band. No caption, here or in s15 and s16. The page's added text is
+     tracked in STATUS and three new captions would be three new claims about
+     the client's practice; the alt text carries the description instead. */
+  .confession-spread {
+    display: grid;
+    grid-template-columns: 1fr 0.62fr;
+    gap: clamp(32px, 4.5vw, 64px);
+    /* stretch, not start: the list runs eight items to about 740px and a 3:4
+       picture is about 490px, so at `start` the column ended with 450px of
+       bare navy under it. Same fix, same reason, as .spread in section 2. */
+    align-items: stretch;
+    margin: clamp(36px, 4.5vw, 56px) 0;
+  }
+  .confession-spread .confession-list { margin: 0; }
+  .confession-figure { margin: 0; display: flex; flex-direction: column; min-height: 0; }
+  .confession-figure img {
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 340px;
+    object-fit: cover;
+    object-position: 50% 45%;
+    border-radius: var(--radius);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+    display: block;
+  }
+  @media (max-width: 900px) {
+    .confession-spread { grid-template-columns: 1fr; }
+    /* Picture first: stacked below, it trails eight lines of the page's most
+       emotional copy and lands as an afterthought. */
+    .confession-figure { order: -1; }
+    /* flex:none and min-height:0 released, or the desktop stretch rules fight
+       the declared ratio in a single-column grid. Same pairing as .spread-figure. */
+    .confession-figure img { flex: none; min-height: 0; aspect-ratio: 4 / 3; }
+  }
 
   /* ══════════════════ SECTION 12 — how we help, starting now ══════════════════ */
-  .help-head { max-width: 62ch; }
+  .help-head { max-width: var(--measure-head); }
 
   /* ══════════════════ SECTION 13 — closer than the system allows ══════════════════ */
-  .closer-head { max-width: 60ch; }
+  .closer-head { max-width: var(--measure-head); }
   .closer-body { max-width: 62ch; margin-top: clamp(20px, 2.5vw, 28px); display: grid; gap: 18px; }
   .closer-body p { font-size: var(--fs-lead); color: var(--navy); line-height: 1.55; margin: 0; }
 
   /* ══════════════════ SECTION 14 — what we will cover on the day ══════════════════ */
-  .cover-head { max-width: 62ch; }
+  .cover-head { max-width: var(--measure-head); }
 
   /* ══════════════════ SECTION 15 — who is teaching ══════════════════ */
   /* Redesigned 2026-08-13: three small floating circles did not carry
@@ -1033,21 +1232,27 @@
      people you met at the top are recognisably the same people here.
      A short teal rule separates photograph from name, the same rule
      vocabulary as the section closes. */
-  .physicians-head { max-width: 62ch; }
+  .physicians-head { max-width: var(--measure-head); }
   .physician-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: clamp(32px, 4vw, 48px); }
   .physician-card {
     text-align: left;
     background: var(--white);
     border: 1px solid rgba(21,29,45,0.06);
-    border-radius: 16px;
+    border-radius: var(--radius);
     padding: 12px 12px 26px;
     box-shadow: 0 18px 44px -28px rgba(21,29,45,0.35);
   }
-  .physician-photo { border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+  .physician-photo { border-radius: var(--radius); overflow: hidden; margin-bottom: 20px; }
   .physician-photo img { width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover; object-position: 50% 22%; }
   .physician-rule { width: 26px; height: 3px; border-radius: 2px; background: var(--teal); margin: 0 10px 12px; }
   .physician-name { font-size: var(--fs-md); font-weight: 700; color: var(--navy); margin: 0 10px 6px; }
   .physician-bio { font-size: var(--fs-sm); color: var(--muted); line-height: 1.55; max-width: 34ch; margin: 0 10px; }
+
+  /* Restored 2026-08-13 evening after a semantic-diff edit silently deleted
+     this whole block while inserting .clinic-figure below it, and reported
+     "removed 0". Without it the three cards stay on a 3-column grid at phone
+     widths and the page gains 136px of horizontal scroll. Verified by render
+     at 390px, not by reading the diff. */
   @media (max-width: 760px) {
     .physician-grid { grid-template-columns: 1fr; gap: 20px; }
     .physician-card { display: grid; grid-template-columns: 116px 1fr; column-gap: 20px; align-items: start; padding: 12px 18px 12px 12px; }
@@ -1056,6 +1261,7 @@
     .physician-name { margin: 0 0 6px; }
     .physician-bio { margin: 0 0 8px; max-width: none; }
   }
+
 
   /* ══════════════════ SECTION 16 — bring a question ══════════════════ */
   /* Redesigned 2026-08-13: was bare prose on white, indistinguishable
@@ -1072,17 +1278,86 @@
      interstitial, not a callout: same copy, same type, same spine.
      Contrast on mint-deep (computed): heading #151D2D 13.57:1, body
      #3D4A5C 7.24:1, eyebrow #00616A 5.79:1. */
-  .question-box {
-    max-width: 820px;
-    background: var(--mint-deep);
-    border: 1px solid rgba(0, 97, 106, 0.35);
-    border-left: 4px solid var(--teal-deep);
-    border-radius: var(--radius);
-    padding: clamp(28px, 4vw, 44px) clamp(24px, 4vw, 48px);
-    box-shadow: 0 18px 40px -26px rgba(21, 29, 45, 0.30);
-  }
+  .question-box { max-width: 820px; }
   .question-box .lead { color: var(--navy); font-weight: 600; margin-bottom: 16px; }
   .question-box .lead:last-child { color: var(--body); font-weight: 400; margin-bottom: 0; }
+
+  /* Photograph added 2026-08-13 evening. This section was already recorded as
+     the faintest step on the page, mint-deep on paper, the first thing to go
+     on a washed-out screen, for the one section that feeds the live session
+     its questions. A photograph beside it is a second, tint-independent reason
+     the panel reads as a panel. The box loses its 820px cap inside the spread
+     because the grid is now doing that job. */
+  .question-spread {
+    display: grid;
+    grid-template-columns: 0.72fr 1fr;
+    gap: clamp(28px, 4vw, 56px);
+    align-items: center;
+  }
+  /* Panel stripped 2026-08-13 evening on Cristian's call: inside the spread the
+     text sits on the section ground, no fill, no edge, no shadow. The panel was
+     added earlier that day precisely because this section was the faintest step
+     on the page and needed to survive a washed-out screen. The photograph is
+     now doing that job, and a tinted card beside a photograph was two devices
+     competing for the same fix. [Superseded, same day: the teal spine described
+     below as staying was subsequently removed page-wide, see the next comment
+     block. No border-left survives anywhere in this file.]
+     Contrast improves with the change, it does not degrade: the body was on
+     mint-deep at 7.24:1 and now sits on paper. */
+  .question-spread .question-box {
+    max-width: none;
+    background: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+  /* Spine removed 2026-08-13 evening on Cristian's call, and NOT replaced with
+     another rule or tint. What was holding the block together was decoration
+     doing a typographer's job: the question and the note were both set at lead
+     size on the same measure, so the eye met one flat grey slab and the spine
+     was the only thing saying "this is a unit".
+
+     Hierarchy now comes from the type itself. The question is the object: h2
+     scale, tight leading, balanced wrap, and a short measure so it stacks into
+     a block with a shape. The note steps down a full size and lightens to
+     muted, on a wider measure, so it reads as the aside it is. The size gap
+     does what the 4px teal bar was doing, and it survives a washed-out screen,
+     which a tint does not.
+
+     The h2's inline style attribute moved here at the same time. It was
+     setting the same three properties this rule sets, and inline wins over any
+     stylesheet, so leaving it there would have made this block a no-op. */
+  .question-spread .question-box h2 {
+    font-size: var(--fs-h2);
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.16;
+    letter-spacing: -0.01em;
+    max-width: 20ch;
+    text-wrap: balance;
+    margin: 0;
+  }
+  .question-spread .question-box .lead:last-child {
+    font-size: var(--fs-md);
+    color: var(--muted);
+    line-height: 1.65;
+    max-width: 46ch;
+    margin: clamp(20px, 2.2vw, 28px) 0 0;
+  }
+  .question-figure { margin: 0; }
+  .question-figure img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: 50% 35%;
+    border-radius: var(--radius);
+    display: block;
+  }
+  @media (max-width: 860px) {
+    .question-spread { grid-template-columns: 1fr; }
+    .question-figure img { aspect-ratio: 3 / 2; }
+  }
 
   /* ══════════════════ SECTION 17 — the form ══════════════════ */
   .register-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 20px 56px; align-items: start; }
@@ -1093,7 +1368,7 @@
   /* Placeholder form mock. .form-embed is the wrapper meant to receive the
      real GHL <iframe> later: no fixed height, no overflow:hidden, so a
      cross-origin iframe at its own native height won't be clipped. */
-  .form-embed { background: var(--white); border-radius: 16px; padding: 30px 28px 28px; box-shadow: 0 24px 56px -20px rgba(0,0,0,0.35); }
+  .form-embed { background: var(--white); border-radius: var(--radius); padding: 30px 28px 28px; box-shadow: 0 24px 56px -20px rgba(0,0,0,0.35); }
   .form-embed:focus-within { box-shadow: 0 24px 56px -20px rgba(0,0,0,0.35), 0 0 0 3px var(--teal-soft); }
   .form-preview-tag {
     display: inline-flex;
@@ -1169,7 +1444,7 @@
   }
 
   /* ══════════════════ SECTION 18 — what happens next ══════════════════ */
-  .steps-head { max-width: 62ch; }
+  .steps-head { max-width: var(--measure-head); }
   .steps-list { list-style: none; margin: clamp(28px, 3.5vw, 40px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
   .step-item { border-top: 3px solid var(--teal-deep); padding-top: 16px; }
   /* Icon + numeral pair, one mark per step matched to meaning (calendar
@@ -1182,7 +1457,7 @@
   @media (max-width: 700px) { .steps-list { grid-template-columns: 1fr; gap: 24px; } }
 
   /* ══════════════════ SECTION 19 — the honest part ══════════════════ */
-  .honest-head { max-width: 62ch; }
+  .honest-head { max-width: var(--measure-head); }
   .honest-body { max-width: 62ch; margin-top: clamp(20px, 2.5vw, 28px); display: grid; gap: 18px; }
   .honest-body p { font-size: var(--fs-lead); color: var(--navy); line-height: 1.6; margin: 0; }
   .honest-body p strong { color: var(--teal-deep); }
@@ -1359,9 +1634,9 @@
 
     <div class="spread">
       <figure class="spread-figure">
-        <img src="assets/s2-waiting-portrait.jpg" width="900" height="1117" loading="lazy"
-             alt="An empty armchair beside a tall window in a quiet room, a folded blanket over the arm and a cup on a side table.">
-        <figcaption>The chair nobody is sitting in, for as long as it takes to read this.</figcaption>
+        <img src="assets/s2-kitchen.jpg" width="900" height="1117" loading="lazy"
+             alt="A kitchen table beside a window, a cup of tea left to go cold and a linen napkin on it, an empty wooden chair pushed back.">
+        <figcaption>The cup that went cold while you looked it up again.</figcaption>
       </figure>
 
       <ol class="recognitions">
@@ -1425,6 +1700,11 @@
       <p class="eyebrow">What you actually get, and what it means</p>
       <h2 id="s3-heading">Six things, and why each one matters to you</h2>
     </div>
+
+    <figure class="clinic-figure">
+      <img src="assets/s15-clinic.jpg" width="2000" height="857" loading="lazy"
+           alt="Dr. Diana Girnita examining a patient's shoulder and wrist in the Rheumatologist OnCall clinic.">
+    </figure>
 
     <div class="value-table">
       <div class="value-table-labels">
@@ -1608,6 +1888,11 @@
       <h2 id="s9-heading">Who this is for, and who it is not</h2>
     </div>
 
+    <figure class="fit-figure">
+      <img src="assets/s9-consult.jpg" width="2000" height="1125" loading="lazy"
+           alt="Dr. Diana Girnita in conversation with a patient seated on a sofa in the Rheumatologist OnCall consulting room.">
+    </figure>
+
     <div class="fit-grid">
       <div class="fit-card fit-card--yes">
         <p class="fit-card-head">This is for you if:</p>
@@ -1652,16 +1937,23 @@
       <h2 id="s11-heading">You might recognise some of this</h2>
     </div>
 
-    <ul class="confession-list">
-      <li>The appointment is in four months, and the questions started in week two.</li>
-      <li>You explained your exhaustion to someone who nodded and said they get tired too.</li>
-      <li>You were told your labs were normal, and left with nothing to do next.</li>
-      <li>You were told it was stress. Or your weight. Or your age.</li>
-      <li>You were handed a diagnosis and a prescription, and no explanation of what the medication would actually do to you.</li>
-      <li>You have read the same three websites at 2am and come away less certain than when you started.</li>
-      <li>You cancelled something again, and apologised again.</li>
-      <li>And you are managing all of it alongside a job, a family, and a budget that never planned for any of this.</li>
-    </ul>
+    <div class="confession-spread">
+      <ul class="confession-list">
+        <li>The appointment is in four months, and the questions started in week two.</li>
+        <li>You explained your exhaustion to someone who nodded and said they get tired too.</li>
+        <li>You were told your labs were normal, and left with nothing to do next.</li>
+        <li>You were told it was stress. Or your weight. Or your age.</li>
+        <li>You were handed a diagnosis and a prescription, and no explanation of what the medication would actually do to you.</li>
+        <li>You have read the same three websites at 2am and come away less certain than when you started.</li>
+        <li>You cancelled something again, and apologised again.</li>
+        <li>And you are managing all of it alongside a job, a family, and a budget that never planned for any of this.</li>
+      </ul>
+
+      <figure class="confession-figure">
+        <img src="assets/s11-hands.jpg" width="900" height="1200" loading="lazy"
+             alt="A rheumatologist examining a patient's hand and wrist during a consultation.">
+      </figure>
+    </div>
 
     <div class="confession-close">
       <p>None of that is a failure of effort on your part. It is what happens when a lifelong condition meets a system built for short visits.</p>
@@ -1705,10 +1997,16 @@
 <!-- ══════════════════ SECTION 16 — bring a question ══════════════════ -->
 <section class="section-white section section--quiet" aria-labelledby="s16-heading">
   <div class="container">
-    <div class="question-box">
-      <p class="eyebrow">Bring a question</p>
-      <h2 id="s16-heading" class="lead" style="font-size: var(--fs-h2); font-weight: 700; color: var(--navy);">If you could ask a rheumatologist one thing, what would it be?</h2>
-      <p class="lead">We read every question that comes in, group them into themes, and answer as many as we can live. It is optional, but these sessions are always better when people ask.</p>
+    <div class="question-spread">
+      <figure class="question-figure">
+        <img src="assets/s16-question.jpg" width="900" height="1125" loading="lazy"
+             alt="Dr. Diana Girnita reading a copy of her book on thriving with rheumatoid arthritis.">
+      </figure>
+      <div class="question-box">
+        <p class="eyebrow">Bring a question</p>
+        <h2 id="s16-heading">If you could ask a rheumatologist one thing, what would it be?</h2>
+        <p class="lead">We read every question that comes in, group them into themes, and answer as many as we can live. It is optional, but these sessions are always better when people ask.</p>
+      </div>
     </div>
   </div>
 </section>
