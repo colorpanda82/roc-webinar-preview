@@ -595,29 +595,42 @@
   .struggle-head { max-width: 62ch; margin-bottom: clamp(28px, 3vw, 40px); }
   .struggle-head .lead { margin-top: 14px; }
 
-  /* Hairlines removed 2026-08-13 (surgical pass): with s3's ruled table
-     and s6's timeline, a third ruled list made the page read as one long
-     ledger. The 01-06 numerals already anchor each row, so spacing alone
-     carries the separation. */
+  /* REDESIGNED 2026-08-13 (second pass on this section). The old build was
+     six near-identical number+text rows capped at 70ch: a tall left-hand
+     strip with a dead right margin for the section's whole height, and 06
+     alone in a white card so it read as a different KIND of content, not
+     the heaviest beat of the same list.
+     Now, mobile-first:
+       - Base (<860px): the compact number+text stack, unchanged in feel —
+         six situations stay six short rows, no card chrome, no added scroll.
+       - >=860px: one weighted card grid on the full measure. Row one is
+         the two long "identity" situations at half width; row two is the
+         three quick recognitions at thirds, so the rhythm accelerates;
+         06 spans the full row as the closing card of the SAME family —
+         same white, same border language — carrying its weight through
+         width and type scale instead of through being a different object.
+     Cards reuse the fit-card DNA (white fill, rgba(21,29,45,0.07) border,
+     soft drop) so s2 and s9 speak one card language. Numerals stay
+     teal-deep: 7.20:1 on white, 6.31:1 on mint — both AA for large text
+     and normal text alike (recomputed against the comfort-pass mint). */
   .struggle-list { list-style: none; margin: 0 0 clamp(36px, 4vw, 52px); padding: 0; }
-  .struggle-item { display: grid; grid-template-columns: auto 1fr; gap: 22px; align-items: baseline; padding: 17px 0; }
-  .struggle-index { font-size: var(--fs-index); font-weight: 800; line-height: 0.85; letter-spacing: -0.02em; color: var(--teal-deep); font-variant-numeric: tabular-nums; }
-  /* 84ch was past the comfortable ceiling for running text; 70ch keeps
-     the return sweep short enough not to lose the line. Same fix on the
-     agenda and feature list below. */
+  .struggle-item { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: baseline; padding: 14px 0; }
+  .struggle-index { font-size: 1.5rem; font-weight: 800; line-height: 0.85; letter-spacing: -0.02em; color: var(--teal-deep); font-variant-numeric: tabular-nums; }
   .struggle-text { margin: 0; font-size: var(--fs-base); color: var(--body); max-width: 70ch; }
   .struggle-text strong { color: var(--navy); font-weight: 700; }
 
-  /* Item six now carries its own number (06) into the break-out card —
-     the numbering decision for fault 5: number all six, sixth stays a
-     visual pattern-break but is no longer uncounted. */
+  /* Item six keeps its number (06) and its card at every width — on mobile
+     it is the one card in the stack, as before; on desktop it is the
+     full-width last row of the grid. The line inside it is the one the
+     source note says must land hardest; it gets the section's largest
+     body type, not a different surface. */
   .struggle-item--break {
     grid-template-columns: auto 1fr;
     background: var(--white);
     border: 1px solid rgba(0,97,106,0.22);
     border-radius: var(--radius);
-    padding: 26px 28px;
-    margin-top: 6px;
+    padding: 22px 20px;
+    margin-top: 8px;
     align-items: center;
   }
   .struggle-item--break .struggle-index { color: var(--teal-deep); }
@@ -634,9 +647,67 @@
   .coda-text p:first-child { font-size: var(--fs-md); color: var(--navy); font-weight: 600; margin-bottom: 8px; max-width: 60ch; }
   .coda-text p:last-child { font-size: var(--fs-lead); color: var(--teal-deep); font-weight: 700; font-style: italic; max-width: 42ch; }
 
-  @media (max-width: 620px) {
-    .struggle-item { grid-template-columns: auto 1fr; gap: 14px; padding: 14px 0; }
-    .struggle-index { font-size: 1.5rem; }
+  @media (min-width: 860px) {
+    .struggle-list {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 20px;
+    }
+    .struggle-item {
+      display: block;
+      padding: 24px 26px 26px;
+      background: var(--white);
+      border: 1px solid rgba(21,29,45,0.07);
+      border-radius: 14px;
+      box-shadow: 0 18px 40px -26px rgba(21,29,45,0.30);
+    }
+    .struggle-item:nth-child(-n+2) { grid-column: span 3; }
+    .struggle-item:nth-child(n+3):nth-child(-n+5) { grid-column: span 2; }
+    /* Numeral tops each card with a hairline running to the card edge:
+       one continuous scan line of 01…05 across the grid. */
+    .struggle-index {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 1.375rem;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .struggle-index::after { content: ""; flex: 1; height: 1px; background: var(--hairline); }
+    .struggle-text { max-width: none; }
+
+    .struggle-item--break {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 28px;
+      align-items: start;
+      padding: 30px 34px 32px;
+      margin-top: 4px;
+      border: 1px solid rgba(0,97,106,0.22);
+      border-radius: 14px;
+    }
+    .struggle-item--break .struggle-index { display: block; font-size: 2.25rem; line-height: 0.9; margin-bottom: 0; }
+    .struggle-item--break .struggle-index::after { content: none; }
+    .struggle-item--break .struggle-text {
+      font-size: clamp(1.25rem, 1.1vw + 0.95rem, 1.75rem);
+      max-width: none;
+      line-height: 1.35;
+      text-wrap: balance;
+    }
+
+    /* Close + coda share one row: the resolution statement on the left,
+       the physicians answering it on the right. Uses the measure the old
+       stacked foot left empty, and trims section height. */
+    .struggle-foot {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: clamp(40px, 5vw, 64px);
+      align-items: center;
+    }
+    .struggle-close { margin-bottom: 0; max-width: none; }
+    .struggle-coda { display: block; }
+    .coda-avatars { margin-bottom: 14px; }
   }
 
   /* ══════════════════ SECTION 3 — six things, and what they mean ══════════════════ */
@@ -1315,19 +1386,21 @@
       </li>
     </ol>
 
-    <div class="struggle-close">
-      <p>None of that is a failure of effort on your part. It is what happens when a lifelong condition meets a system built for twelve-minute visits. So we built something that sits in the gap.</p>
-    </div>
-
-    <div class="struggle-coda">
-      <div class="coda-avatars">
-        <img src="assets/dr-girnita-sq-560.jpg" alt="Dr. Diana Girnita">
-        <img src="assets/dr-devalla-sq-560.jpg" alt="Dr. Vishnuteja Devalla">
-        <img src="assets/dr-titianu-sq-560.jpg" alt="Dr. Mirela Titianu">
+    <div class="struggle-foot">
+      <div class="struggle-close">
+        <p>None of that is a failure of effort on your part. It is what happens when a lifelong condition meets a system built for twelve-minute visits. So we built something that sits in the gap.</p>
       </div>
-      <div class="coda-text">
-        <p>Three physicians who treat this every day, answering your questions properly. Not influencers. Not a search result. Not an AI that has never examined anybody.</p>
-        <p>It is the Reddit thread where the doctors actually reply.</p>
+
+      <div class="struggle-coda">
+        <div class="coda-avatars">
+          <img src="assets/dr-girnita-sq-560.jpg" alt="Dr. Diana Girnita">
+          <img src="assets/dr-devalla-sq-560.jpg" alt="Dr. Vishnuteja Devalla">
+          <img src="assets/dr-titianu-sq-560.jpg" alt="Dr. Mirela Titianu">
+        </div>
+        <div class="coda-text">
+          <p>Three physicians who treat this every day, answering your questions properly. Not influencers. Not a search result. Not an AI that has never examined anybody.</p>
+          <p>It is the Reddit thread where the doctors actually reply.</p>
+        </div>
       </div>
     </div>
 
