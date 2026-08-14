@@ -617,9 +617,21 @@
      window, so they read as the same photograph with a continuity error rather
      than as a return. On mobile the crescendo switches to image-on-top, which
      stacked the two directly against each other and made it plainer still.
-     The column is now a kitchen, the 06 band keeps the armchair, and both are
-     empty seats in one house. s2-waiting-portrait.jpg is retained unused in
-     img/ and img/masters/ if that call is ever reversed. */
+     A generated kitchen replaced it, and was itself replaced later the same
+     evening by s2-consult.jpg, a real consultation from ROC's own shoot, on
+     Cristian's call. The 06 band keeps the armchair.
+
+     Note what that does to the section's arc, because it was a real trade and
+     not an oversight: the column used to be an absence (an empty kitchen) and
+     is now care being given, so the section opens on the answer and closes on
+     the loneliest moment rather than deepening from one absence into another.
+     Chosen knowingly; the warmth is a counterweight to a list of dismissals.
+
+     No figcaption. The other four shoot photographs carry none, and the
+     caption here was ours rather than approved copy, so dropping it also
+     removes the only text this design effort added to section 2.
+     s2-waiting-portrait.jpg and s2-kitchen.jpg are both retained unused, web
+     copy and master, if either call is ever reversed. */
   /* 14px matches .curriculum-head .lead and .register-copy .lead. This was
      the only head lead on the page sitting at 0px under its heading
      (measured: explore/audit-gaps.cjs companion check, s2 0 / s4 14 / s17 14),
@@ -651,7 +663,17 @@
     flex: 1 1 auto;
     min-height: 340px;
     object-fit: cover;
-    object-position: 42% 55%;
+    /* X pulled 42% -> 25% on Cristian's eye, 2026-08-13. At 42% a bright
+       window-blind strip sat in the last few pixels of the right edge; the
+       source is 0.75 and this column renders 0.639, so 14.8% of the width is
+       cropped and X decides which 14.8%. Lowering X shows more of the left and
+       drops that strip. Checked by zooming the rightmost 26px at 3x across
+       several values (explore/tune-s2-crop.cjs): visible at 42%, a remnant at
+       35%, gone at 25%. A column-average probe could NOT see it, because the
+       strip occupies only part of the height and washes out in the mean.
+       Y stays 55%: it is inert here at desktop, where the crop is horizontal,
+       and only bites at mobile, where the figure is 4:5 against a 3:4 source. */
+    object-position: 25% 55%;
     /* var(--radius), not the 4px this shipped with. Photograph corners on this
        page now follow one rule: var(--radius) on a light band, 14px where the
        picture is framed on navy with a hairline and a shadow (s8, s11). Section
@@ -1502,11 +1524,108 @@
 
   /* ══════════════════ FOOTER ══════════════════ */
   .site-footer { background: var(--navy-band); color: var(--on-dark); }
-  .footer-disclaimer { border-top: 1px solid var(--navy-hairline); padding: clamp(28px, 4vw, 44px) 0; }
-  .footer-disclaimer p { font-size: var(--fs-sm); color: var(--on-dark); line-height: 1.6; max-width: 76ch; margin: 0; }
+
+  /* Closing CTA, reproduced from ROC's own membership page footer
+     (community.rheumatologistoncall.com/landing-page), 2026-08-14.
+
+     VERBATIM ON CRISTIAN'S INSTRUCTION. An earlier version of this block was
+     my interpretation: left aligned, contractions expanded, button relabelled
+     "Save my seat". That was overruled. Every value below is the COMPUTED
+     style read off their live page, not eyeballed from a screenshot:
+
+       eyebrow   12px / 400, #57A2A9, letter-spacing 2px, uppercase
+       headline  18px / 700, #FFFFFF, line-height 21.6px
+       body      20px / 400, #CBD5E0, line-height 30px
+       button    #57A2A9 fill, #FFFFFF, 16px / 600, padding 16px 32px, radius 5px
+       all centred
+
+     Two knowing deviations, both forced rather than chosen:
+     - Their body is set in Outfit. This page loads Inter only, and pulling a
+       second webfont for one paragraph is not worth it. Renders in Inter.
+     - Their button targets #section-Pxt498Gl46, a pricing table that does not
+       exist here. Pointed at #register, the only destination on this page.
+
+     ACCESSIBILITY, recorded not silently fixed: white on #57A2A9 is 2.94:1,
+     and 16px/600 is not WCAG large text (that needs 18.66px bold or 24px), so
+     it wants 4.5:1. Their button fails AA and this reproduction inherits that.
+     Note --teal is this same #57A2A9 and is tokenised "decorative only, never
+     text" for exactly this reason. Do NOT copy this button elsewhere. If it is
+     ever allowed to change, --teal-deep #00616A on white clears AA at 6.4:1. */
+  .footer-cta {
+    padding-block: clamp(48px, 6vw, 76px) clamp(40px, 5vw, 60px);
+    display: grid;
+    justify-items: center;
+    text-align: center;
+  }
+  .footer-cta-eyebrow {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--teal);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    line-height: 1.3;
+    margin: 0 0 14px;
+  }
+  .footer-cta-line {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.2;
+    margin: 0 0 24px;
+  }
+  .footer-cta-body {
+    font-size: 20px;
+    font-weight: 400;
+    color: #CBD5E0;
+    line-height: 30px;
+    margin: 0 0 32px;
+    max-width: 900px;
+  }
+  .footer-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--teal);
+    color: var(--white);
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 16px 32px;
+    border-radius: 5px;
+    transition: background 0.15s ease;
+  }
+  .footer-cta-btn:hover { background: #4A9199; }
+
+  .footer-disclaimer { border-top: 1px solid var(--navy-hairline); padding-block: clamp(28px, 4vw, 44px) 0; }
+  /* Full width on Cristian's call, 2026-08-14. It was capped at 76ch, which
+     computed to 719px of the 1000px available and made it the only footer block
+     not spanning the container; the address, scope and copyright lines were all
+     already full width, so the cap read as a ragged inset rather than a measure.
+     The trade, stated rather than hidden: this now runs past the comfortable
+     45 to 75 character range. Acceptable here because it is a legal disclaimer
+     rather than a passage anyone reads end to end, and because matching the
+     three lines beneath it is worth more in a footer than an ideal measure. Do
+     NOT copy this reasoning to body copy in the page proper. */
+  .footer-disclaimer p { font-size: var(--fs-sm); color: var(--on-dark); line-height: 1.6; margin: 0; }
   .footer-disclaimer strong { color: var(--white); }
-  .footer-bottom { padding: 20px 0 clamp(28px, 4vw, 40px); }
-  .footer-copy { font-size: var(--fs-caption); color: var(--muted-soft); }
+  /* Organisation block taken from ROC's own membership page footer
+     (community.rheumatologistoncall.com/landing-page), read 2026-08-14, so the
+     two pages agree on the business identity a reader checks before handing
+     over an email address. Their footer is centred; ours stays left-aligned
+     because every other block on this page is.
+
+     Contrast computed against --navy-band #1E2739, not assumed: --on-dark
+     9.93:1, --muted-soft 5.04:1, both clear AA. Note --muted would be 2.45:1
+     here and must not be used on this band; it is the light-ground colour that
+     replaced --muted-soft in sections 3 and 9, which is exactly the sort of
+     swap that looks like a fix and is a regression. */
+  .footer-bottom { padding-block: clamp(22px, 2.6vw, 30px) clamp(28px, 4vw, 40px); display: grid; gap: 7px; }
+  .footer-org { font-size: var(--fs-sm); color: var(--on-dark); line-height: 1.6; margin: 0; }
+  .footer-scope { font-size: var(--fs-caption); color: var(--muted-soft); line-height: 1.6; margin: 0; }
+  .footer-copy { font-size: var(--fs-caption); color: var(--muted-soft); margin: 0; }
+  /* Inherit the colour so the link cannot quietly drop below the contrast
+     computed above, and underline it so it is not identified by colour alone. */
+  .footer-bottom a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 
   /* ══════════════════ Responsive: below 480px, general tightening ══════════════════ */
   @media (max-width: 480px) {
@@ -1672,9 +1791,8 @@
 
     <div class="spread">
       <figure class="spread-figure">
-        <img src="assets/s2-kitchen.jpg" width="900" height="1117" loading="lazy"
-             alt="A kitchen table beside a window, a cup of tea left to go cold and a linen napkin on it, an empty wooden chair pushed back.">
-        <figcaption>The cup that went cold while you looked it up again.</figcaption>
+        <img src="assets/s2-consult.jpg" width="900" height="1200" loading="lazy"
+             alt="Dr. Diana Girnita examining a patient's forearm during a consultation, the patient seated with their back to the camera.">
       </figure>
 
       <ol class="recognitions">
@@ -2158,6 +2276,13 @@
 
 <!-- ══════════════════ FOOTER ══════════════════ -->
 <footer class="site-footer" role="contentinfo">
+  <div class="container footer-cta">
+    <p class="footer-cta-eyebrow">Whenever You&rsquo;re Ready</p>
+    <p class="footer-cta-line">There&rsquo;s a place here for you.</p>
+    <p class="footer-cta-body">Real education from real rheumatologists, a community that understands, and a calmer path forward. Come learn with us, at your own pace.</p>
+    <a class="footer-cta-btn" href="#register">Join the Remission Circle <span aria-hidden="true">&rarr;</span></a>
+  </div>
+
   <div class="container footer-disclaimer">
     <p><strong>Medical disclaimer.</strong> The Remission Circle and this session are education and community, not medical care. What we share is general education, not individualized medical advice, diagnosis or treatment, and it does not create a physician-patient relationship or replace your own physician.</p>
   </div>
@@ -2169,6 +2294,8 @@
     mark once on white, where it reads correctly.
   -->
   <div class="container footer-bottom">
+    <p class="footer-org">Rheumatologist OnCall&reg; &middot; 3151 Airway Avenue, Unit A1, Costa Mesa, CA 92626 &middot; <a href="tel:+16505254404">(650) 525-4404</a></p>
+    <p class="footer-scope">Telehealth in 20 states &middot; In person in California &middot; <a href="https://rheumatologistoncall.com">rheumatologistoncall.com</a></p>
     <p class="footer-copy">&copy; Rheumatologist OnCall. The Remission Circle opens [MONTH].</p>
   </div>
 </footer>
